@@ -1,0 +1,17 @@
+{
+  "name": "GalleriOpusServer",
+  "version": "1.0.18",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "bun run --hot src/index.ts"
+  },
+  "dependencies": {
+    "@prisma/client": "^4.10.1",
+    "elysia": "latest",
+    "prisma": "^4.10.1"
+  },
+  "devDependencies": {
+    "bun-types": "latest"
+  },
+  "module": "src/index.js"
+}
