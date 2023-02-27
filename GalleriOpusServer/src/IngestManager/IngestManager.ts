@@ -3,17 +3,8 @@ import { join } from "path"
 import * as fs from "node:fs"
 import { nanoid } from "nanoid"
 
-interface IngestResult {
-    filePath: string,
-    tags: string[],
-}
-
-interface IngestHandler {
-    name: string,
-    matchUrl: (url: string) => boolean,
-    getUrlHooks: () => RegExp[],
-    ingestFromUrl: (url: string, downloadPath: string) => Promise<IngestResult>
-}
+import {IngestHandler, IngestResult} from "../types/IngestHandler"
+import redditIngestHandler from "../IngestPlugins/OpusReddit"
 
 interface IngestManager {
     initialize: () => void,
@@ -29,14 +20,14 @@ export const directDLIngestHandler: IngestHandler = {
     return [/.*/]
     },
     matchUrl(url) {
+        //TODO
         return true
     },
     async ingestFromUrl(url, downloadPath) {
         const response = await fetch(url)
         const contentType = response.headers.get("content-type")
+        // Shouldn't happen, but bug if content-type is "image/" with no append type.
         const matches: [string, string] | undefined = contentType?.matchAll(/image\/(.*)/g).next().value
-        // console.log(contentType, Array.from(matches ?? []))
-        // console.log(matches?.next().value, matches?.next().value)
         if (exists(matches) && matches.length > 0) {
             const downloadPathWithExtension = `${downloadPath}.${matches[1]}` 
             await Bun.write(downloadPathWithExtension, response)
@@ -54,7 +45,7 @@ export const directDLIngestHandler: IngestHandler = {
 
 export const ingestManager: IngestManager =  {
     initialize: () => {
-        console.log("q")
+        ingestManager.registerHandler(redditIngestHandler)
         ingestManager.registerHandler(directDLIngestHandler)
     },
 
