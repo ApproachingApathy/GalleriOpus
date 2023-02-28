@@ -1,7 +1,7 @@
 import { IngestHandler } from "../../types/IngestHandler";
 import { exists } from "../../utils/exists";
 
-console.log(process.env.REDDIT_CREDENTIALS);
+const INGEST_SOURCE = "ingest_source:opus-reddit";
 
 const redditHooks = [/((?:https?)?:\/\/)?(?:www\.)?(reddit\.com)/];
 
@@ -32,7 +32,8 @@ const redditIngestHandler: IngestHandler = {
 		if (listing[0].data.children[0].data.is_self)
 			throw new Error("Invalid Post");
 
-		const imageUrl = listing[0].data.children[0].data.url;
+		const post = listing[0].data.children[0];
+		const imageUrl = post.data.url;
 
 		const imageRes = await fetch(imageUrl);
 		const contentType = imageRes.headers.get("Content-Type");
@@ -45,7 +46,12 @@ const redditIngestHandler: IngestHandler = {
 
 			return {
 				filePath: downloadPathWithExtension,
-				tags: [`url:${url}`],
+				tags: [
+					`source:reddit`,
+					`url:${url}`,
+					`subreddit:${post.data.subreddit}`,
+					`author:${post.data.author}`,
+				],
 			};
 		}
 		// console.log(submission.is_self)
