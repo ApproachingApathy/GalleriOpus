@@ -90,35 +90,6 @@ export const ingestManager: IngestManager = {
 			join(process.env.ASSET_DOWNLOAD_PATH ?? "", nanoid())
 		);
 
-		const asset = db.asset.create({
-			data: {
-				tags: {
-					create: [
-						...result.tags.map((t) => ({
-							tag: {
-								connectOrCreate: {
-									create: {
-										value: t,
-									},
-									where: {
-										value: t,
-									},
-								},
-							},
-						})),
-					],
-				},
-				url: new URL(result.filePath, "file://").toString(),
-			},
-			include: {
-				tags: {
-					include: {
-						tag: true,
-					},
-				},
-			},
-		});
-
 		return result;
 	},
 };
