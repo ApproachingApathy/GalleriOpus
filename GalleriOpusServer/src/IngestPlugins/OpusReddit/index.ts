@@ -48,6 +48,7 @@ const redditIngestHandler: IngestHandler = {
 				filePath: downloadPathWithExtension,
 				tags: [
 					`source:reddit`,
+					`downloader:${INGEST_SOURCE}`,
 					`url:${url}`,
 					`subreddit:${post.data.subreddit}`,
 					`author:${post.data.author}`,
