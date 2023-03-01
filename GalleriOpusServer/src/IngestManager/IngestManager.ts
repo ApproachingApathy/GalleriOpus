@@ -1,11 +1,6 @@
 import { exists } from "../utils/exists";
 import { join } from "path";
-import * as fs from "node:fs";
 import { nanoid } from "nanoid";
-
-import type { Prisma } from "@prisma/client";
-import { PrismaClient } from "@prisma/client";
-const db = new PrismaClient();
 
 import { IngestHandler, IngestResult } from "../types/IngestHandler.js";
 import redditIngestHandler from "../IngestPlugins/OpusReddit/index.js";
