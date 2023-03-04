@@ -1,5 +1,4 @@
 import { IngestHandler } from "../../types/IngestHandler";
-import { exists } from "../../utils/exists";
 import { getContentTypeInfo } from "../common/getContentTypeInfo";
 
 const INGEST_SOURCE = "ingest_source:opus-reddit";

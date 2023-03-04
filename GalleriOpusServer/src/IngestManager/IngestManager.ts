@@ -3,6 +3,7 @@ import { join } from "path";
 import { nanoid } from "nanoid";
 
 import { IngestHandler, IngestResult } from "../types/IngestHandler.js";
+import directDLIngestHandler from "../IngestPlugins/OpusDirect";
 import redditIngestHandler from "../IngestPlugins/OpusReddit/index.js";
 
 interface IngestManager {
@@ -12,35 +13,6 @@ interface IngestManager {
 	registerHandler: (handler: IngestHandler) => void;
 	ingest: (url: string) => Promise<IngestResult>;
 }
-
-export const directDLIngestHandler: IngestHandler = {
-	name: "OPUS_DirectDL",
-	getUrlHooks() {
-		return [/.*/];
-	},
-	matchUrl(url) {
-		//TODO
-		return true;
-	},
-	async ingestFromUrl(url, downloadPath) {
-		const response = await fetch(url);
-		const contentType = response.headers.get("content-type");
-		// Shouldn't happen, but bug if content-type is "image/" with no append type.
-		const matches: [string, string] | undefined = contentType
-			?.matchAll(/image\/(.*)/g)
-			.next().value;
-		if (exists(matches) && matches.length > 0) {
-			const downloadPathWithExtension = `${downloadPath}.${matches[1]}`;
-			await Bun.write(downloadPathWithExtension, response);
-
-			return {
-				filePath: downloadPathWithExtension,
-				tags: [`url:${url}`],
-			};
-		}
-		throw new Error(`Failed to download from ${url}`);
-	},
-};
 
 export const ingestManager: IngestManager = {
 	initialize: () => {
