@@ -1,5 +1,6 @@
 import { IngestHandler } from "../../types/IngestHandler";
 import { exists } from "../../utils/exists";
+import { getContentTypeInfo } from "../common/getContentTypeInfo";
 
 const INGEST_SOURCE = "ingest_source:opus-reddit";
 
@@ -37,11 +38,11 @@ const redditIngestHandler: IngestHandler = {
 
 		const imageRes = await fetch(imageUrl);
 		const contentType = imageRes.headers.get("Content-Type");
-		const matches: [string, string] | undefined = contentType
-			?.matchAll(/image\/(.*)/g)
-			.next().value;
-		if (exists(matches) && matches.length > 0) {
-			const downloadPathWithExtension = `${downloadPath}.${matches[1]}`;
+		const contentTypeInfo = contentType
+			? getContentTypeInfo(contentType)
+			: undefined;
+		if (contentTypeInfo?.isImage) {
+			const downloadPathWithExtension = `${downloadPath}.${contentTypeInfo.subtype}`;
 			await Bun.write(downloadPathWithExtension, imageRes);
 
 			return {
@@ -55,15 +56,7 @@ const redditIngestHandler: IngestHandler = {
 				],
 			};
 		}
-		// console.log(submission.is_self)
-		// if (!submission.is_self) {
-		//     console.log(submission.url)
-		// }
-		// console.log(submission)
-		return {
-			filePath: "downloadPath",
-			tags: [""],
-		};
+		throw new Error("Could not retrieve assets.");
 	},
 };
 
