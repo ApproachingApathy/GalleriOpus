@@ -18,7 +18,7 @@ const redditIngestHandler: IngestHandler = {
 		console.log("Reddit");
 		// r.config({ proxies: false })
 		const working = url.replace(/(\/$)|$/, "/.json");
-		console.log(working);
+		// console.log(working);
 
 		const res = await fetch(working, {
 			headers: new Headers({
@@ -26,8 +26,8 @@ const redditIngestHandler: IngestHandler = {
 			}),
 		});
 		const listing: any = await res.json();
-		console.log(listing[0]);
-		console.log(listing[0].data.children[0].data.is_self);
+		// console.log(listing[0]);
+		// console.log(listing[0].data.children[0].data.is_self);
 
 		if (listing[0].data.children[0].data.is_self)
 			throw new Error("Invalid Post");
