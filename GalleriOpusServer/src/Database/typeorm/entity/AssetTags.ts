@@ -4,6 +4,7 @@ import {
 	Column,
 	ManyToOne,
 	Relation,
+	CreateDateColumn,
 } from "typeorm";
 import { Asset } from "./Asset";
 import { Tag } from "./Tag";
@@ -13,7 +14,7 @@ export class AssetTag {
 	@PrimaryGeneratedColumn("uuid")
 	id!: string;
 
-	@Column("datetime")
+	@CreateDateColumn()
 	createdAt!: Date;
 
 	@ManyToOne(() => Asset, (asset) => asset.tags)

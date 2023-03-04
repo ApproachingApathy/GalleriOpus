@@ -1,4 +1,4 @@
-import { Any } from "typeorm";
+import { In } from "typeorm";
 import { db } from "./db";
 import { Asset } from "./typeorm/entity/Asset";
 import { AssetTag } from "./typeorm/entity/AssetTags";
@@ -11,25 +11,29 @@ interface CreateAssetData {
 
 export const createAsset = async ({ url, tags }: CreateAssetData) => {
 	console.log("Creating Assets");
-	const asset = new Asset();
+	const AssetRepo = db.getRepository(Asset);
+	const asset = AssetRepo.create();
 	asset.url = url;
 
-	await db.manager.save(asset);
+	await AssetRepo.save(asset);
 
 	const TagRepo = db.getRepository(Tag);
 	const tagData = tags.map((t) => {
-		const tag = new Tag();
+		const tag = TagRepo.create();
+		// @ts-ignore
+		tag.id = null;
 		tag.value = t;
 		return tag;
 	});
 
-	await TagRepo.upsert(tagData, ["UPDATE", "CREATE"]);
-	const newTags = await TagRepo.findBy({ value: Any(tags) });
+	await TagRepo.upsert(tagData, ["value"]);
+	const newTags = await TagRepo.findBy({ value: In(tags) });
 
 	const AssetTagRepo = db.getRepository(AssetTag);
 	const assetTagData = newTags.map((t) => {
 		const assetTag = new AssetTag();
-		(assetTag.asset = asset), (assetTag.tag = t);
+		assetTag.asset = asset;
+		assetTag.tag = t;
 		return assetTag;
 	});
 
