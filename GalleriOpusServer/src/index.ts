@@ -2,11 +2,23 @@ import { Elysia, t } from "elysia";
 import { IngestRequestBody } from "./types/IngestRequestBody";
 
 import { ingestManager } from "./IngestManager/IngestManager";
-import { createAsset } from "./Database/asset";
+import { createAsset, getAssets } from "./Database/asset";
 ingestManager.initialize();
 
 const app = new Elysia()
 	.get("/", () => "Hello Elysia")
+	.get(
+		"/assets",
+		({ query }) => {
+			const assets = getAssets();
+			return assets;
+		},
+		{
+			schema: {
+				query: t.Object({}),
+			},
+		}
+	)
 	.post(
 		"/ingest",
 		async ({ body }) => {

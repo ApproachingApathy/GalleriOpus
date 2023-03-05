@@ -80,7 +80,7 @@ export const ingestManager: IngestManager = {
 			throw new Error("The target url did not return an image.");
 
 		const fileUrl = await ingestManager._writeResponseToFS(
-			`${nanoid()}${contentTypeInfo.subtype}`,
+			`${nanoid()}.${contentTypeInfo.subtype}`,
 			result.imageResponse
 		);
 

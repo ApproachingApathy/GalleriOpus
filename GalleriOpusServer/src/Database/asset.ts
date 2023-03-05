@@ -1,4 +1,5 @@
 import { In } from "typeorm";
+import { exists } from "../utils/exists";
 import { db } from "./db";
 import { Asset } from "./typeorm/entity/Asset";
 import { AssetTag } from "./typeorm/entity/AssetTags";
@@ -20,18 +21,20 @@ export const createAsset = async ({ url, tags }: CreateAssetData) => {
 
 	await AssetRepo.save(asset);
 
-	const tagData = tags.map((t) => {
+	const existingTags = await TagRepo.findBy({ value: In(tags) });
+	const tagsWithoutExisting = tags.filter(
+		(t) => !exists(existingTags.find((tag2) => tag2.value))
+	);
+	const tagData = tagsWithoutExisting.map((t) => {
 		const tag = TagRepo.create();
-		// @ts-ignore
-		tag.id = null;
 		tag.value = t;
 		return tag;
 	});
+	const insertedTags = await TagRepo.save(tagData);
 
-	await TagRepo.upsert(tagData, ["value"]);
-	const newTags = await TagRepo.findBy({ value: In(tags) });
+	const combinedTags = [...existingTags, ...insertedTags];
 
-	const assetTagData = newTags.map((t) => {
+	const assetTagData = combinedTags.map((t) => {
 		const assetTag = new AssetTag();
 		assetTag.asset = asset;
 		assetTag.tag = t;
@@ -45,5 +48,5 @@ export const createAsset = async ({ url, tags }: CreateAssetData) => {
 
 export const getAssets = async () => {
 	const assets = AssetRepo.find();
-	return;
+	return assets;
 };
