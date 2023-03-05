@@ -1,10 +1,17 @@
-import { Elysia, t } from "elysia";
+import { Elysia, SCHEMA, DEFS } from "elysia";
+import { swagger } from "@elysiajs/swagger";
 
 import { ingestManager } from "./IngestManager/IngestManager";
 import { assetController } from "./controllers/assets";
 ingestManager.initialize();
 
-const app = new Elysia().get("/", () => "Hello Elysia");
+const app = new Elysia()
+	.use(
+		swagger({
+			path: "/docs",
+		})
+	)
+	.get("/", ({ store }) => store[SCHEMA]);
 
 app.use(assetController);
 

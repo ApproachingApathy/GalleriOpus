@@ -7,7 +7,7 @@
   },
   "dependencies": {
     "@elysiajs/swagger": "^0.2.0",
-    "elysia": "latest",
+    "elysia": "^0.2.9",
     "mysql2": "^3.2.0",
     "nanoid": "^4.0.1",
     "reflect-metadata": "^0.1.13",

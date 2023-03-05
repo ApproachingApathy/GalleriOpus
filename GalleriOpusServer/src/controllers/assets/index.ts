@@ -5,7 +5,7 @@ import { t } from "elysia";
 
 export const assetController: Controller = (app) => {
 	app.group("/assets", (app) => {
-		app
+		return app
 			.get("/", () => {
 				return getAssets();
 			})
