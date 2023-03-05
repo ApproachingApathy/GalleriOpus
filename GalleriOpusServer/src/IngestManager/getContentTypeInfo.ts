@@ -1,4 +1,6 @@
-import { exists } from "../../utils/exists";
+import { exists } from "../utils/exists";
+
+type ContentType = string;
 
 type ContentTypeInfo =
 	| {
@@ -9,7 +11,9 @@ type ContentTypeInfo =
 			isImage: false;
 	  };
 
-export const getContentTypeInfo = (contentType: string): ContentTypeInfo => {
+export const getContentTypeInfo = (
+	contentType: ContentType
+): ContentTypeInfo => {
 	const matches: [string, string] | undefined = contentType
 		?.matchAll(/image\/(.*)/g)
 		.next().value;

@@ -13,7 +13,7 @@ const app = new Elysia()
 			const ingestResult = await ingestManager.ingest(body.url);
 			const asset = await createAsset({
 				tags: ingestResult.tags,
-				url: ingestResult.filePath,
+				url: ingestResult.fileUrl.toString(),
 			});
 			return asset;
 		},
