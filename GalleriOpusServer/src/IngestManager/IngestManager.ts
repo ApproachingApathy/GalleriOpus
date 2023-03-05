@@ -1,46 +1,27 @@
 import { exists } from "../utils/exists";
-import { join } from "path";
+import { join, resolve } from "path";
 import { nanoid } from "nanoid";
 
-import { IngestHandler, IngestResult } from "../types/IngestHandler.js";
+import { IngestHandler, ImageResponseResult } from "../types/IngestHandler.js";
+import directDLIngestHandler from "../IngestPlugins/OpusDirect";
 import redditIngestHandler from "../IngestPlugins/OpusReddit/index.js";
+import { getContentTypeInfo } from "./getContentTypeInfo";
+
+type FileName = string;
+
+interface IngestResult {
+	fileUrl: URL;
+	tags: string[];
+}
 
 interface IngestManager {
 	initialize: () => void;
 	_ingestHandlers: { [x: string]: IngestHandler };
 	_urlHooks: [RegExp, string][];
+	_writeResponseToFS: (fileName: FileName, response: Response) => Promise<URL>;
 	registerHandler: (handler: IngestHandler) => void;
 	ingest: (url: string) => Promise<IngestResult>;
 }
-
-export const directDLIngestHandler: IngestHandler = {
-	name: "OPUS_DirectDL",
-	getUrlHooks() {
-		return [/.*/];
-	},
-	matchUrl(url) {
-		//TODO
-		return true;
-	},
-	async ingestFromUrl(url, downloadPath) {
-		const response = await fetch(url);
-		const contentType = response.headers.get("content-type");
-		// Shouldn't happen, but bug if content-type is "image/" with no append type.
-		const matches: [string, string] | undefined = contentType
-			?.matchAll(/image\/(.*)/g)
-			.next().value;
-		if (exists(matches) && matches.length > 0) {
-			const downloadPathWithExtension = `${downloadPath}.${matches[1]}`;
-			await Bun.write(downloadPathWithExtension, response);
-
-			return {
-				filePath: downloadPathWithExtension,
-				tags: [`url:${url}`],
-			};
-		}
-		throw new Error(`Failed to download from ${url}`);
-	},
-};
 
 export const ingestManager: IngestManager = {
 	initialize: () => {
@@ -51,6 +32,12 @@ export const ingestManager: IngestManager = {
 	_ingestHandlers: {},
 
 	_urlHooks: [],
+
+	_writeResponseToFS: async (fileName, response) => {
+		const filePath = resolve(join(process.env.ASSET_DOWNLOAD_PATH, fileName));
+		await Bun.write(filePath, response);
+		return new URL(`file://${filePath}`);
+	},
 
 	registerHandler: (handler: IngestHandler) => {
 		const existingIngestHandlerAtName =
@@ -65,8 +52,8 @@ export const ingestManager: IngestManager = {
 			.getUrlHooks()
 			.map((matcher) => [matcher, handler.name]);
 
-		(ingestManager._ingestHandlers[handler.name] = handler),
-			ingestManager._urlHooks.push(...hooks);
+		ingestManager._ingestHandlers[handler.name] = handler;
+		ingestManager._urlHooks.push(...hooks);
 	},
 
 	ingest: async (url: string) => {
@@ -80,11 +67,26 @@ export const ingestManager: IngestManager = {
 
 		const ingestHandler = ingestManager._ingestHandlers[urlHook[1]];
 
-		const result = await ingestHandler.ingestFromUrl(
-			url,
-			join(process.env.ASSET_DOWNLOAD_PATH ?? "", nanoid())
+		const result = await ingestHandler.getImageResponse(url);
+
+		const contentType =
+			result.imageResponse.headers.get("Content-Type") ?? undefined;
+
+		if (!contentType) throw new Error("Failed to verify content-typed");
+
+		const contentTypeInfo = getContentTypeInfo(contentType);
+
+		if (!contentTypeInfo.isImage)
+			throw new Error("The target url did not return an image.");
+
+		const fileUrl = await ingestManager._writeResponseToFS(
+			`${nanoid()}.${contentTypeInfo.subtype}`,
+			result.imageResponse
 		);
 
-		return result;
+		return {
+			fileUrl,
+			tags: result.tags,
+		};
 	},
 };

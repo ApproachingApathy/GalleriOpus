@@ -1,3 +1,2 @@
-import { PrismaClient } from "@prisma/client";
-
-export const db = new PrismaClient();
+import { AppDataSource } from "./typeorm";
+export const db = AppDataSource;

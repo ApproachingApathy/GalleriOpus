@@ -1,33 +1,20 @@
-import { Elysia, t } from "elysia";
-import { IngestRequestBody } from "./types/IngestRequestBody";
+import { Elysia, SCHEMA, DEFS } from "elysia";
+import { swagger } from "@elysiajs/swagger";
 
 import { ingestManager } from "./IngestManager/IngestManager";
-import { createAsset } from "./Database/asset";
+import { assetController } from "./controllers/assets";
 ingestManager.initialize();
 
 const app = new Elysia()
-	.get("/", () => "Hello Elysia")
-	.post(
-		"/ingest",
-		async ({ body }) => {
-			const ingestResult = await ingestManager.ingest(body.url);
-			const asset = await createAsset({
-				tags: ingestResult.tags,
-				url: ingestResult.filePath,
-			});
-			return asset;
-		},
-		{
-			schema: {
-				body: t.Object({
-					url: t.String(),
-					options: t.Object({}),
-				}),
-			},
-		}
+	.use(
+		swagger({
+			path: "/docs",
+		})
 	)
-	.listen(3000);
+	.get("/", ({ store }) => store[SCHEMA]);
 
-console.log(
-	`🦊 Elysia is running at ${app.server?.hostname}:${app.server?.port}`
-);
+app.use(assetController);
+
+app.listen(3000);
+
+console.log(`Elysia is running at ${app.server?.hostname}:${app.server?.port}`);

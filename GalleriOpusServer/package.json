@@ -6,12 +6,15 @@
     "dev": "bun run --hot src/index.ts"
   },
   "dependencies": {
-    "@prisma/client": "^4.10.1",
-    "elysia": "latest",
+    "@elysiajs/swagger": "^0.2.0",
+    "elysia": "^0.2.9",
+    "mysql2": "^3.2.0",
     "nanoid": "^4.0.1",
-    "prisma": "^4.10.1"
+    "reflect-metadata": "^0.1.13",
+    "typeorm": "^0.3.12"
   },
   "devDependencies": {
+    "@types/better-sqlite3": "^7.6.3",
     "bun-types": "latest"
   },
   "module": "src/index.js"
