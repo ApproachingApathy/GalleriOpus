@@ -1,4 +1,4 @@
-import { createAsset, getAssets, getAssetsByTags } from "../../Database/asset";
+import { createAsset, deleteAssets, getAssets, getAssetsByTags } from "../../Database/asset";
 import { ingestManager } from "../../IngestManager/IngestManager";
 import { Controller } from "../../types/Controller";
 import { t } from "elysia";
@@ -24,6 +24,16 @@ export const assetController: Controller = (app) => {
 					},
 				}
 			)
+			.delete("/", async ({ body }) => {
+				await deleteAssets({ targets: body.targets })
+				return undefined
+			}, {
+				schema: {
+					body: t.Object({
+						targets: t.Array(t.Number({ minimum: 0 }))
+					})
+				}
+			})
 			.post(
 				"/ingest",
 				async ({ body }) => {
@@ -42,7 +52,7 @@ export const assetController: Controller = (app) => {
 						}),
 					},
 				}
-			);
+			)
 	});
 
 	return app;

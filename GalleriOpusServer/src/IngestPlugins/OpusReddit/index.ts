@@ -6,7 +6,7 @@ const INGEST_SOURCE = "opus-reddit";
 const redditHooks = [/((?:https?)?:\/\/)?(?:www\.)?(reddit\.com)/];
 
 const redditIngestHandler: IngestHandler = {
-	name: "OpusReddit",
+	name: "OpusReddit" as const,
 	getUrlHooks() {
 		return redditHooks;
 	},
