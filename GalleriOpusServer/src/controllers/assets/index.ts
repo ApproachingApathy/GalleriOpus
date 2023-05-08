@@ -1,4 +1,4 @@
-import { createAsset, getAssets } from "../../Database/asset";
+import { createAsset, getAssets, getAssetsByTags } from "../../Database/asset";
 import { ingestManager } from "../../IngestManager/IngestManager";
 import { Controller } from "../../types/Controller";
 import { t } from "elysia";
@@ -6,9 +6,24 @@ import { t } from "elysia";
 export const assetController: Controller = (app) => {
 	app.group("/assets", (app) => {
 		return app
-			.get("/", () => {
-				return getAssets();
-			})
+			.get(
+				"/",
+				({ query }) => {
+					if (query.tags) {
+						const tags = query.tags.split(",");
+						return getAssetsByTags({ tags });
+					}
+
+					return getAssets();
+				},
+				{
+					schema: {
+						query: t.Object({
+							tags: t.Optional(t.String()),
+						}),
+					},
+				}
+			)
 			.post(
 				"/ingest",
 				async ({ body }) => {

@@ -1,7 +1,7 @@
 import { IngestHandler } from "../../types/IngestHandler";
 import { getContentTypeInfo } from "../../IngestManager/getContentTypeInfo";
 
-const INGEST_SOURCE = "ingest_source:opus-reddit";
+const INGEST_SOURCE = "opus-reddit";
 
 const redditHooks = [/((?:https?)?:\/\/)?(?:www\.)?(reddit\.com)/];
 

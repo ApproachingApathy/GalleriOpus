@@ -3,6 +3,7 @@ import { swagger } from "@elysiajs/swagger";
 
 import { ingestManager } from "./IngestManager/IngestManager";
 import { assetController } from "./controllers/assets";
+import { tagController } from "./controllers/tags";
 ingestManager.initialize();
 
 const app = new Elysia()
@@ -11,9 +12,9 @@ const app = new Elysia()
 			path: "/docs",
 		})
 	)
-	.get("/", ({ store }) => store[SCHEMA]);
+	.get("/", () => "Galleri Opus");
 
-app.use(assetController);
+app.use(assetController).use(tagController);
 
 app.listen(3000);
 
