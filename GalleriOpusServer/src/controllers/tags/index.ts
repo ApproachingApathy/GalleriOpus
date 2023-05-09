@@ -1,14 +1,15 @@
 import Elysia, { t } from "elysia";
 import { createTags, getTags } from "../../Database/tags";
+import { createResponse } from "../createResponse";
 
 export const tagController = (app: Elysia) => {
-	app.group("/tags", (app) =>
+	return app.group("/tags", (app) =>
 		app
-			.get("/", () => {
-				return getTags();
+			.get("/", async () => {
+				return createResponse(await getTags());
 			})
 			.post("/",  ({ body }) => {
-				return createTags({ tags: body.tags })
+				return createResponse(createTags({ tags: body.tags }))
 			}, {
 				schema: {
 					body: t.Object({
@@ -17,6 +18,4 @@ export const tagController = (app: Elysia) => {
 				}
 			})
 	);
-
-	return app;
 };

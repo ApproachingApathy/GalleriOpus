@@ -1,19 +1,22 @@
 import { applyTagsToAsset, createAsset, deleteAssets, getAssets, getAssetsByTags, removeTagsFromAsset } from "../../Database/asset";
+import type { Asset } from "../../Database/typeorm/entity/Asset";
 import { ingestManager } from "../../IngestManager/IngestManager";
 import Elysia, { t } from "elysia";
+import { createResponse } from "../createResponse";
 
 export const assetController = (app: Elysia) => {
 	return app.group("/assets", (app) => {
 		return app
 			.get(
 				"/",
-				({ query }) => {
+				async ({ query }) => {
+					let body: Asset[] = []
 					if (query.tags) {
 						const tags = query.tags.split(",");
-						return getAssetsByTags({ tags });
+						return createResponse(await getAssetsByTags({ tags }));
 					}
 
-					return getAssets();
+					return createResponse(await getAssets());
 				},
 				{
 					schema: {
@@ -41,7 +44,7 @@ export const assetController = (app: Elysia) => {
 						tags: ingestResult.tags,
 						url: ingestResult.fileUrl.toString(),
 					});
-					return asset;
+					return createResponse(asset);
 				},
 				{
 					schema: {
@@ -55,7 +58,7 @@ export const assetController = (app: Elysia) => {
 			.post(
 				"/:id/tags",
 				async ({ body, params: { id } }) => {
-					return applyTagsToAsset({ asset: Number.parseInt(id), tags: body.tags })
+					return createResponse(await applyTagsToAsset({ asset: Number.parseInt(id), tags: body.tags }))
 				},
 				{
 					schema: {
@@ -71,7 +74,8 @@ export const assetController = (app: Elysia) => {
 			.delete(
 				"/:id/tags",
 				async ({ body, params: { id } }) => {
-					return removeTagsFromAsset({ asset: Number.parseInt(id), tags: body.tags })
+					await removeTagsFromAsset({ asset: Number.parseInt(id), tags: body.tags })
+					return undefined
 				},
 				{
 					schema: {
