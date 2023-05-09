@@ -8,13 +8,11 @@ export const createResponse = (data: any, status = 200, contentType = "applicati
     const headers = new Headers()
     headers.set("Content-Type", contentType)
 
-    let stringifiedData: string
-    if (Array.isArray(data) || typeof data === 'object') stringifiedData = JSON.stringify(data)
-    else stringifiedData = data
+    let responseBody: string
+    if (Array.isArray(data) || data.constructor.name === "Object") responseBody = JSON.stringify(data)
+    else responseBody = data
 
-    console.log(stringifiedData)
-
-    return new Response(stringifiedData, {
+    return new Response(responseBody, {
         status,
         headers
     })

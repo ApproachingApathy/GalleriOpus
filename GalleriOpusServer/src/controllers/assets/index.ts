@@ -1,8 +1,9 @@
-import { applyTagsToAsset, createAsset, deleteAssets, getAssets, getAssetsByTags, removeTagsFromAsset } from "../../Database/asset";
+import { applyTagsToAsset, createAsset, deleteAssets, getAsset, getAssets, getAssetsByTags, removeTagsFromAsset } from "../../Database/asset";
 import type { Asset } from "../../Database/typeorm/entity/Asset";
 import { ingestManager } from "../../IngestManager/IngestManager";
 import Elysia, { t } from "elysia";
 import { createResponse } from "../createResponse";
+import { getImageBlob } from "./getImageBlob";
 
 export const assetController = (app: Elysia) => {
 	return app.group("/assets", (app) => {
@@ -53,6 +54,23 @@ export const assetController = (app: Elysia) => {
 							options: t.Object({}),
 						}),
 					},
+				}
+			)
+			.get(
+				"/:id/image",
+				async ({ params }) => {
+					const asset = await getAsset(Number.parseInt(params.id))
+
+					if (!asset) return createResponse("Asset not found", 404, "text/plain")
+					const blob = getImageBlob(new URL(asset.url))
+					return createResponse(blob.stream(), 200, blob.type)
+				},
+				{
+					schema: {
+						params: t.Object({
+							id: t.String()
+						})
+					}
 				}
 			)
 			.post(
