@@ -1,5 +1,6 @@
 import { Elysia, SCHEMA, DEFS } from "elysia";
 import { swagger } from "@elysiajs/swagger";
+import { cors } from "@elysiajs/cors"
 
 import { ingestManager } from "./IngestManager/IngestManager";
 import { assetController } from "./controllers/assets";
@@ -12,6 +13,7 @@ const app = new Elysia()
 			path: "/docs",
 		})
 	)
+	.use(cors())
 	.get("/", () => "Galleri Opus");
 
 app.use(assetController).use(tagController);

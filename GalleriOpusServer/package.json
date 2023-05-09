@@ -6,6 +6,7 @@
     "dev": "bun run --hot src/index.ts"
   },
   "dependencies": {
+    "@elysiajs/cors": "^0.3.0",
     "@elysiajs/swagger": "^0.4.0",
     "elysia": "^0.4.15",
     "mysql2": "^3.2.0",
