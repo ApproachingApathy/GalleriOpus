@@ -1,21 +1,31 @@
 <script lang="ts">
     import { api } from "$lib/galleri-opus-api/index"
     import { url } from "@roxi/routify";
+    import { selection } from "$lib/store/selectedAsset"
+    import type { Asset } from "../../../GalleriOpusServer/src/Database/typeorm/entity/Asset";
 
     let data = api.assets.get().then(v => v.data).then(v => v);
     $: console.log(data)
+
+    $: isSelected = (asset: Asset) => {
+        if (Array.isArray($selection)) {
+            return !!$selection.find(a => a.id === asset.id)
+        }
+
+        return $selection?.id === asset.id
+    }
 </script>
 
 {#await data then assets}
-    {console.log(assets)}
     <div class="grid grid-flow-col gap-2 w-full grid-cols-5 md:grid-cols-6 lg:grid-cols-7">
         {#each assets as asset (asset.id)}
-        <div class="">
-            <a class="contents" href={`/asset/${asset.id}`}>
-                <div>
-                    <img class="w-full object-contain flex-shrink h-80" src={`http://127.0.0.1:3000/assets/${asset.id}/image`} />
+        <div class={`flex flex-col p-1 ${isSelected(asset) ? "bg-teal-700" : ""}`} role="button" tabindex="1" on:keyup={()=>{}} on:click={() => {
+            selection.set(asset)
+        }}>
+                <div class="h-5/6">
+                    <img class="w-full h-full object-contain flex-shrink" src={`http://127.0.0.1:3000/assets/${asset.id}/image`} loading="lazy" alt=""/>
                 </div>    
-                <div class="flex">
+                <div class="flex p-2">
                     <div class="w-40">
                         <p>{asset.id}</p>
                     </div>
@@ -25,7 +35,6 @@
                         </p>
                     </div>
                 </div>
-            </a>
             </div>
         {/each}
     </div>
