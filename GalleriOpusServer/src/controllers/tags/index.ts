@@ -1,8 +1,7 @@
-import { t } from "elysia";
+import Elysia, { t } from "elysia";
 import { createTags, getTags } from "../../Database/tags";
-import { Controller } from "../../types/Controller";
 
-export const tagController: Controller = (app) => {
+export const tagController = (app: Elysia) => {
 	app.group("/tags", (app) =>
 		app
 			.get("/", () => {

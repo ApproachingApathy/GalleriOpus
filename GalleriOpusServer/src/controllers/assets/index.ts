@@ -1,10 +1,9 @@
 import { applyTagsToAsset, createAsset, deleteAssets, getAssets, getAssetsByTags, removeTagsFromAsset } from "../../Database/asset";
 import { ingestManager } from "../../IngestManager/IngestManager";
-import { Controller } from "../../types/Controller";
-import { t } from "elysia";
+import Elysia, { t } from "elysia";
 
-export const assetController: Controller = (app) => {
-	app.group("/assets", (app) => {
+export const assetController = (app: Elysia) => {
+	return app.group("/assets", (app) => {
 		return app
 			.get(
 				"/",
@@ -86,6 +85,4 @@ export const assetController: Controller = (app) => {
 				}	
 			)
 	});
-
-	return app;
 };

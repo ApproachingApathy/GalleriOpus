@@ -14,9 +14,10 @@ const app = new Elysia()
 		})
 	)
 	.use(cors())
-	.get("/", () => "Galleri Opus");
+	.use(assetController)
+	.use(tagController)
+	.get("/", () => "Galleri Opus")
 
-app.use(assetController).use(tagController);
 
 app.listen(3000);
 
