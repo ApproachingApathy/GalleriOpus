@@ -17,7 +17,7 @@ interface ApplyTagToAssetParams {
     tags: string[]
 }
 
-export const applyTagToAsset = async ({ asset: assetId, tags }: ApplyTagToAssetParams) => {
+export const applyTagsToAsset = async ({ asset: assetId, tags }: ApplyTagToAssetParams) => {
     const asset = await AssetRepo.findOne({ where: { id: assetId }, relations: {
         tags: {
             tag: true
@@ -26,9 +26,12 @@ export const applyTagToAsset = async ({ asset: assetId, tags }: ApplyTagToAssetP
 
     if (!asset) throw new Error("Asset doesn't exist.")
 
+    const existingTags = await TagRepo.find({ where: tags.map(t => ({ value: t })) })
+    const tagsWithoutExisting = tags.filter(t => !exists(existingTags.find(existingTag => t == existingTag.value)))
+
     
 
-    const newTags = tags.map(t => {
+    const newAssetTags = tagsWithoutExisting.map(t => {
         const at = new AssetTag()
         const tag = new Tag()
         tag.value = t
@@ -36,8 +39,14 @@ export const applyTagToAsset = async ({ asset: assetId, tags }: ApplyTagToAssetP
         return at
     })
 
+    const newAssetTagsLinks = existingTags.map(t => {
+        const at = new AssetTag()
+        at.tag = t
+        return at
+    })
 
-    asset.tags.push(...newTags)
+
+    asset.tags.push(...newAssetTags, ...newAssetTagsLinks)
 
     return AssetRepo.save(asset)
 }

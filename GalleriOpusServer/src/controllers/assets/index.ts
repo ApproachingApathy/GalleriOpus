@@ -1,4 +1,4 @@
-import { applyTagToAsset, createAsset, deleteAssets, getAssets, getAssetsByTags } from "../../Database/asset";
+import { applyTagsToAsset, createAsset, deleteAssets, getAssets, getAssetsByTags, removeTagsFromAsset } from "../../Database/asset";
 import { ingestManager } from "../../IngestManager/IngestManager";
 import { Controller } from "../../types/Controller";
 import { t } from "elysia";
@@ -56,7 +56,23 @@ export const assetController: Controller = (app) => {
 			.post(
 				"/:id/tags",
 				async ({ body, params: { id } }) => {
-					return applyTagToAsset({ asset: Number.parseInt(id), tags: body.tags })
+					return applyTagsToAsset({ asset: Number.parseInt(id), tags: body.tags })
+				},
+				{
+					schema: {
+						body: t.Object({
+							tags: t.Array(t.String())
+						}),
+						params: t.Object({
+							id: t.String()
+						})
+					},
+				}	
+			)
+			.delete(
+				"/:id/tags",
+				async ({ body, params: { id } }) => {
+					return removeTagsFromAsset({ asset: Number.parseInt(id), tags: body.tags })
 				},
 				{
 					schema: {
