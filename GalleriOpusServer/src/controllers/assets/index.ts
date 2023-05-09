@@ -1,4 +1,4 @@
-import { createAsset, deleteAssets, getAssets, getAssetsByTags } from "../../Database/asset";
+import { applyTagToAsset, createAsset, deleteAssets, getAssets, getAssetsByTags } from "../../Database/asset";
 import { ingestManager } from "../../IngestManager/IngestManager";
 import { Controller } from "../../types/Controller";
 import { t } from "elysia";
@@ -30,7 +30,7 @@ export const assetController: Controller = (app) => {
 			}, {
 				schema: {
 					body: t.Object({
-						targets: t.Array(t.Number({ minimum: 0 }))
+						targets: t.Array(t.Integer({ minimum: 0 }))
 					})
 				}
 			})
@@ -52,6 +52,22 @@ export const assetController: Controller = (app) => {
 						}),
 					},
 				}
+			)
+			.post(
+				"/:id/tags",
+				async ({ body, params: { id } }) => {
+					return applyTagToAsset({ asset: Number.parseInt(id), tags: body.tags })
+				},
+				{
+					schema: {
+						body: t.Object({
+							tags: t.Array(t.String())
+						}),
+						params: t.Object({
+							id: t.String()
+						})
+					},
+				}	
 			)
 	});
 

@@ -17,9 +17,9 @@ export class AssetTag {
 	@CreateDateColumn()
 	createdAt!: Date;
 
-	@ManyToOne(() => Asset, (asset) => asset.tags, { onDelete: "CASCADE" })
+	@ManyToOne(() => Asset, (asset) => asset.tags, { onDelete: "CASCADE"})
 	asset!: Relation<Asset>;
 
-	@ManyToOne(() => Tag, (tag) => tag.assets)
+	@ManyToOne(() => Tag, (tag) => tag.assets, { cascade: ["insert"] })
 	tag!: Relation<Tag>;
 }

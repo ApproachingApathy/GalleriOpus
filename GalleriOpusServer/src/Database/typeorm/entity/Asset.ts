@@ -23,6 +23,6 @@ export class Asset {
 	@Column("text")
 	url!: string;
 
-	@OneToMany(() => AssetTag, (assetTag) => assetTag.asset)
+	@OneToMany(() => AssetTag, (assetTag) => assetTag.asset, { cascade: ["insert"] })
 	tags!: Relation<AssetTag[]>;
 }
