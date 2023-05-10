@@ -49,3 +49,14 @@ export const useAddTagToAsset = () => {
         }
     })
 }
+
+export const useRemoveTagFromAsset = () => {
+    const queryClient = useQueryClient();
+    return useMutation(({ id, tags }: {id: number, tags: string[]} ) => {
+        return api.assets[`${id}`].tags.delete({ tags }).then(v => v.data).then(v => v)
+    }, {
+        onSuccess: (_, {id}) => {
+            queryClient.invalidateQueries(keys.asset(id))
+        }
+    })
+}

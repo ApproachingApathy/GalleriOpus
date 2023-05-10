@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { useAddTagToAsset, useGetAsset } from "$lib/queries";
+    import { useAddTagToAsset, useGetAsset, useRemoveTagFromAsset } from "$lib/queries";
     import { selection } from "$lib/store/selectedAsset"
     import type { Asset } from "../../../../../GalleriOpusServer/src/Database/typeorm/entity/Asset";
     
@@ -11,11 +11,16 @@
 
     $: assetQuery = useGetAsset(($selection as Asset)?.id, { enabled: isSingleSelection })
 
-    const addTagMutation = useAddTagToAsset()  
+    const addTagMutation = useAddTagToAsset()
+    const removeTagMutation = useRemoveTagFromAsset()  
 
     $: addTag = async (assetId: number) => {
         $addTagMutation.mutate({ id: assetId, tags: [inputTag]})
         inputTag = ""
+    }
+
+    $: removeTag = async (assetId: number, tag: string) => {
+        $removeTagMutation.mutate({ id: assetId, tags: [tag]})
     }
 </script>
 
@@ -29,7 +34,6 @@
             <p>Selected: {$selection.length}</p>
         {:else}
             {#if $assetQuery.isSuccess}
-                {console.log($assetQuery.data)}
                 <div class="flex flex-col gap-3">
                     <p>Asset ID: {$assetQuery.data.id}</p>
                     <h3 class="text-xs font-medium border-b border-slate-50/75">Tags</h3>
@@ -45,7 +49,14 @@
                     
                     <div class="flex justify-start w-full overflow-hidden flex-wrap gap-1">
                         {#each $assetQuery.data.tags as assetTag}
-                        <div title={assetTag.tag.value} class="max-w-[24ch] truncate text-xs p-1 bg-slate-700 hover:bg-slate-600">{assetTag.tag.value}</div>
+                        <div title={assetTag.tag.value} class="group flex text-xs p-1 bg-slate-700 hover:bg-slate-600">
+                            <div class="max-w-[24ch] truncate">
+                                {assetTag.tag.value}
+                            </div>
+                            <button class="hidden group-hover:inline-block px-1 text-red-600 font-bold" type="button" on:click={() => {
+                                removeTag($assetQuery.data.id, assetTag.tag.value)
+                            }}>X</button>
+                        </div>
                         {/each}
                     </div>
                 </div>
