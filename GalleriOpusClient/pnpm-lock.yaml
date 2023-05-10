@@ -4,6 +4,7 @@ specifiers:
   '@elysiajs/eden': ^0.4.1
   '@roxi/routify': ^2.18.12
   '@sveltejs/vite-plugin-svelte': ^2.0.3
+  '@sveltestack/svelte-query': ^1.6.0
   '@tsconfig/svelte': ^4.0.1
   autoprefixer: ^10.4.14
   elysia: ^0.4.15
@@ -18,6 +19,7 @@ specifiers:
 
 dependencies:
   '@elysiajs/eden': 0.4.1_elysia@0.4.15
+  '@sveltestack/svelte-query': 1.6.0
   elysia: 0.4.15
 
 devDependencies:
@@ -364,6 +366,15 @@ packages:
     transitivePeerDependencies:
       - supports-color
     dev: true
+
+  /@sveltestack/svelte-query/1.6.0:
+    resolution: {integrity: sha512-C0wWuh6av1zu3Pzwrg6EQmX3BhDZQ4gMAdYu6Tfv4bjbEZTB00uEDz52z92IZdONh+iUKuyo0xRZ2e16k2Xifg==}
+    peerDependencies:
+      broadcast-channel: ^4.5.0
+    peerDependenciesMeta:
+      broadcast-channel:
+        optional: true
+    dev: false
 
   /@tootallnate/once/1.1.2:
     resolution: {integrity: sha512-RbzJvlNzmRq5c3O09UipeuXno4tA1FE6ikOjxZK0tuxVv3412l64l5t1W5pj4+rJq9vpkm/kwiR07aZXnsKPxw==}

@@ -1,11 +1,11 @@
 <script lang="ts">
-    import { api } from "$lib/galleri-opus-api/index"
+    import { api } from "$lib/galleri-opus-api"
     import { url } from "@roxi/routify";
     import { selection } from "$lib/store/selectedAsset"
     import type { Asset } from "../../../GalleriOpusServer/src/Database/typeorm/entity/Asset";
+    import { useGetAssets } from "$lib/queries";
 
-    let data = api.assets.get().then(v => v.data).then(v => v);
-    $: console.log(data)
+    let queryResult = useGetAssets() 
 
     $: isSelected = (asset: Asset) => {
         if (Array.isArray($selection)) {
@@ -16,12 +16,12 @@
     }
 </script>
 
-{#await data then assets}
+{#if $queryResult.isSuccess}
     <div class="grid grid-flow-col gap-2 w-full grid-cols-5 md:grid-cols-6 lg:grid-cols-7">
-        {#each assets as asset (asset.id)}
-        <div class={`flex flex-col p-1 ${isSelected(asset) ? "bg-teal-700" : ""}`} role="button" tabindex="1" on:keyup={()=>{}} on:click={() => {
-            selection.set(asset)
-        }}>
+        {#each $queryResult.data as asset (asset.id)}
+            <div class={`flex flex-col p-1 ${isSelected(asset) ? "bg-teal-700" : ""}`} role="button" tabindex="1" on:keyup={()=>{}} on:click={() => {
+                selection.set(asset)
+            }}>
                 <div class="h-5/6">
                     <img class="w-full h-full object-contain flex-shrink" src={`http://127.0.0.1:3000/assets/${asset.id}/image`} loading="lazy" alt=""/>
                 </div>    
@@ -38,4 +38,4 @@
             </div>
         {/each}
     </div>
-{/await}
+{/if}

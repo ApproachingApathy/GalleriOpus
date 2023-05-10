@@ -1,6 +1,6 @@
 <script lang="ts">
     import TopBar from "$lib/components/TopBar.svelte";
-    import SideBar from "$lib/components/SideBar.svelte";
+    import SideBar from "$lib/components/SideBar/SideBar.svelte";
 </script>
 <div class="dark flex flex-col h-full">
     <div>
