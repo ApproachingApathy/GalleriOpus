@@ -4,7 +4,7 @@
  * @param status HTTP status code.
  * @param contentType HTTP mime-type. Defaults to application/json
  */
-export const createResponse = (data: any, status = 200, contentType = "application/json") => {
+export const createResponse = (data: any, status = 200, contentType: string = "application/json") => {
     const headers = new Headers()
     headers.set("Content-Type", contentType)
 

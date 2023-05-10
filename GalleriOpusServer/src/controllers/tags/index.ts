@@ -6,10 +6,12 @@ export const tagController = (app: Elysia) => {
 	return app.group("/tags", (app) =>
 		app
 			.get("/", async () => {
-				return createResponse(await getTags());
+				const tags = await getTags()
+				return [...tags]
 			})
-			.post("/",  ({ body }) => {
-				return createResponse(createTags({ tags: body.tags }))
+			.post("/",  async ({ body }) => {
+				const tags = await createTags({ tags: body.tags })
+				return [...tags]
 			}, {
 				schema: {
 					body: t.Object({

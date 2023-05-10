@@ -9,15 +9,18 @@ export const assetController = (app: Elysia) => {
 	return app.group("/assets", (app) => {
 		return app
 			.get(
-				"/",
+				"",
 				async ({ query }) => {
 					let body: Asset[] = []
 					if (query.tags) {
 						const tags = query.tags.split(",");
-						return createResponse(await getAssetsByTags({ tags }));
+						const assets = await getAssetsByTags({ tags });
+						return [...assets]
 					}
 
-					return createResponse(await getAssets());
+					const assets = await getAssets()
+
+					return [...assets];
 				},
 				{
 					schema: {
@@ -27,7 +30,7 @@ export const assetController = (app: Elysia) => {
 					},
 				}
 			)
-			.delete("/", async ({ body }) => {
+			.delete("", async ({ body }) => {
 				await deleteAssets({ targets: body.targets })
 				return undefined
 			}, {
@@ -45,7 +48,7 @@ export const assetController = (app: Elysia) => {
 						tags: ingestResult.tags,
 						url: ingestResult.fileUrl.toString(),
 					});
-					return createResponse(asset);
+					return {...asset};
 				},
 				{
 					schema: {
@@ -76,7 +79,8 @@ export const assetController = (app: Elysia) => {
 			.post(
 				"/:id/tags",
 				async ({ body, params: { id } }) => {
-					return createResponse(await applyTagsToAsset({ asset: Number.parseInt(id), tags: body.tags }))
+					const asset = await applyTagsToAsset({ asset: Number.parseInt(id), tags: body.tags })
+					return {...asset}
 				},
 				{
 					schema: {
