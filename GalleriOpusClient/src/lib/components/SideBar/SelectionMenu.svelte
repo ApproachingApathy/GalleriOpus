@@ -41,7 +41,9 @@
             {#if $assetQuery.isSuccess}
                 <div class="flex flex-col gap-3">
                     <div>
-                        <img src={`http://127.0.0.1:3000/assets/${$assetQuery.data.id}/image`} alt=""/>
+                        <a class="contents" href="http://127.0.0.1:3000/assets/{$assetQuery.data.id}/image" target="_blank">
+                            <img src="http://127.0.0.1:3000/assets/{$assetQuery.data.id}/image" alt=""/>
+                        </a>
                     </div>
                     <p>Asset ID: {$assetQuery.data.id}</p>
                     <h3 class="text-xs font-medium border-b border-slate-50/75">Tags</h3>
