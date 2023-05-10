@@ -34,7 +34,6 @@ export const assetController = (app: Elysia) => {
                 }
             )
             .delete("", async ({ body, set }) => {
-                set.headers["Content-Type"] = "application/json"
                 await deleteAssets({ targets: body.targets })
                 return undefined
             }, {
@@ -145,7 +144,6 @@ export const assetController = (app: Elysia) => {
             .delete(
                 "/:id/tags",
                 async ({ body, params: { id }, set }) => {
-                    set.headers["Content-Type"] = "application/json"
                     await removeTagsFromAsset({ asset: Number.parseInt(id), tags: body.tags })
                     return undefined
                 },
