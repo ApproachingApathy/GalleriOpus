@@ -13,7 +13,7 @@ const app = new Elysia()
 			path: "/docs",
 		})
 	)
-	// .use(cors())
+	.use(cors())
 	.use(assetController)
 	.use(tagController)
 	.get("/", () => "Galleri Opus")

@@ -8,5 +8,5 @@ const TagRepo = db.getRepository(Tag);
 const AssetTagRepo = db.getRepository(AssetTag);
 
 export const getAsset = async (id: number) => {
-    return AssetRepo.findOne({ where: { id } })
+    return AssetRepo.findOne({ where: { id }, relations: ["tags", "tags.tag"] })
 }

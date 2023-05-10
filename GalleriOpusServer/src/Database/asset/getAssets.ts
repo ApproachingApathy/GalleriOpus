@@ -10,14 +10,21 @@ const AssetTagRepo = db.getRepository(AssetTag);
 interface GetAssetsParams {
 	limit: number;
 	offset: number;
+	includeTags: boolean;
 };
 
 const defaultGetAssetParams: GetAssetsParams = {
 	limit: 100,
-	offset: 0
+	offset: 0,
+	includeTags: false
 }
 
-export const getAssets = async ({ limit, offset } = defaultGetAssetParams) => {
-	const assets = AssetRepo.find({ relations: ["tags", "tags.tag"], take: limit, skip: offset});
+export const getAssets = async (options: Partial<GetAssetsParams> = {}) => {
+	const { limit, offset, includeTags } = {...defaultGetAssetParams, ...options }
+	const relations = []
+
+	if (includeTags) relations.push("tags", "tags.tag")
+
+	const assets = AssetRepo.find({ relations, take: limit, skip: offset});
 	return assets;
 };
