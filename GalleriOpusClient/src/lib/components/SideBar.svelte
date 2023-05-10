@@ -35,15 +35,9 @@
             {#if Array.isArray($selection)}
                 <p>Selected: {$selection.length}</p>
             {:else}
-                <div>
+                <div class="flex flex-col gap-3">
                     <p>Asset ID: {$selection.id}</p>
                     <h3 class="text-xs font-medium border-b border-slate-50/75">Tags</h3>
-                    <div class="flex justify-start w-full overflow-hidden flex-wrap gap-1 py-2">
-                        {#each $selection.tags as assetTag}
-                            <div title={assetTag.tag.value} class="max-w-[24ch] truncate text-xs p-1 bg-slate-700 hover:bg-slate-600">{assetTag.tag.value}</div>
-                        {/each}
-                    </div>
-
                     <div class="flex items-center justify-center gap-2">
                         <form on:submit={(e) => {
                             e.preventDefault()
@@ -52,6 +46,12 @@
                             <input placeholder="Add Tag" bind:value={inputTag} />
                             <button type="submit">Add</button>
                         </form>
+                    </div>
+
+                    <div class="flex justify-start w-full overflow-hidden flex-wrap gap-1">
+                        {#each $selection.tags as assetTag}
+                            <div title={assetTag.tag.value} class="max-w-[24ch] truncate text-xs p-1 bg-slate-700 hover:bg-slate-600">{assetTag.tag.value}</div>
+                        {/each}
                     </div>
                 </div>
             {/if}
