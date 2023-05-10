@@ -9,7 +9,7 @@ export const createResponse = (data: any, status = 200, contentType = "applicati
     headers.set("Content-Type", contentType)
 
     let responseBody: string
-    if (Array.isArray(data) || data.constructor.name === "Object") responseBody = JSON.stringify(data)
+    if (contentType === "application/json" && typeof data !== "string") responseBody = JSON.stringify(data)
     else responseBody = data
 
     return new Response(responseBody, {
