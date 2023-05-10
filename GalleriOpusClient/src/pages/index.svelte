@@ -19,7 +19,8 @@
 {#if $queryResult.isSuccess}
     <div class="grid grid-flow-col gap-2 w-full grid-cols-5 md:grid-cols-6 lg:grid-cols-7">
         {#each $queryResult.data as asset (asset.id)}
-            <div class={`flex flex-col p-1 ${isSelected(asset) ? "bg-teal-700" : ""}`} role="button" tabindex="1" on:keyup={()=>{}} on:click={() => {
+            <div class={`flex flex-col p-1 ${isSelected(asset) ? "bg-teal-700" : ""}`} role="button" tabindex="0" on:keyup={()=>{}} on:click={() => {
+                // console.log(asset)
                 selection.set(asset)
             }}>
                 <div class="h-5/6">

@@ -7,7 +7,13 @@
   import { Router } from "@roxi/routify"
   import { routes } from "../.routify/routes"
 
-  const queryClient = new QueryClient()
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: {
+        cacheTime: 0
+      }
+    }
+  })
 </script>
 <QueryClientProvider client={queryClient}>
   <Router {routes} />

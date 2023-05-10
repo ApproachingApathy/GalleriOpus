@@ -1,15 +1,20 @@
 <script lang="ts">
-    import { useAddTagToAsset, useGetAsset, useRemoveTagFromAsset } from "$lib/queries";
+    import { assetKeys, useAddTagToAsset, useGetAsset, useRemoveTagFromAsset } from "$lib/queries";
     import { selection } from "$lib/store/selectedAsset"
     import type { Asset } from "../../../../../GalleriOpusServer/src/Database/typeorm/entity/Asset";
     
     let inputTag = ""
-    $: console.log(selection)
-
-    $: hasSelection = !!$selection
-    $: isSingleSelection = hasSelection && !Array.isArray($selection)
-
-    $: assetQuery = useGetAsset(($selection as Asset)?.id, { enabled: isSingleSelection })
+    let hasSelection = false
+    let isSingleSelection = false
+    $: {
+        hasSelection = !!$selection
+        isSingleSelection = hasSelection && !Array.isArray($selection)
+        console.log($selection)
+    }
+    
+    const assetQuery = useGetAsset(0, { enabled: false })
+    $: assetQuery.updateOptions({ enabled: isSingleSelection, queryKey: assetKeys.asset(($selection as Asset)?.id)})
+    // $: console.log(typeof $assetQuery.data)
 
     const addTagMutation = useAddTagToAsset()
     const removeTagMutation = useRemoveTagFromAsset()  
@@ -35,6 +40,9 @@
         {:else}
             {#if $assetQuery.isSuccess}
                 <div class="flex flex-col gap-3">
+                    <div>
+                        <img src={`http://127.0.0.1:3000/assets/${$assetQuery.data.id}/image`} alt=""/>
+                    </div>
                     <p>Asset ID: {$assetQuery.data.id}</p>
                     <h3 class="text-xs font-medium border-b border-slate-50/75">Tags</h3>
                     <div class="flex items-center justify-center gap-2">
