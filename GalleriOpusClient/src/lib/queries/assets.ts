@@ -60,3 +60,15 @@ export const useRemoveTagFromAsset = () => {
         },
     })
 }
+
+export const useAddAsset = () => {
+    const queryClient = useQueryClient();
+
+    return useMutation(({ url }: { url: string }) => {
+        return api.assets.ingest.post(({ url, options: {}})).then(v => v.data).then(v => v);
+    }, {
+        onSuccess: () => {
+            queryClient.invalidateQueries(assetKeys.assets())
+        }
+    })
+}
