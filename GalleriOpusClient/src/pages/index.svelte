@@ -17,14 +17,14 @@
 </script>
 
 {#if $queryResult.isSuccess}
-    <div class="grid grid-flow-col gap-2 w-full grid-cols-5 md:grid-cols-6 lg:grid-cols-7">
+    <div class="grid auto-rows-auto gap-2 w-full grid-cols-5 md:grid-cols-6 lg:grid-cols-7">
         {#each $queryResult.data as asset (asset.id)}
-            <div class="flex flex-col p-1 {isSelected(asset) ? 'bg-teal-700' : ''}" role="button" tabindex="0" on:keyup={()=>{}} on:click={() => {
+            <div class="flex flex-col items-start p-1 {isSelected(asset) ? 'bg-teal-700' : ''}" role="button" tabindex="0" on:keyup={()=>{}} on:click={() => {
                 // console.log(asset)
                 selection.set(asset)
             }}>
                 <div class="h-5/6">
-                    <img class="w-full h-full object-contain flex-shrink" src="http://127.0.0.1:3000/assets/{asset.id}/image" loading="lazy" alt=""/>
+                    <img class="h-full object-contain flex-shrink" src="http://127.0.0.1:3000/assets/{asset.id}/image" loading="lazy" alt=""/>
                 </div>    
                 <div class="flex p-2">
                     <div class="w-40">

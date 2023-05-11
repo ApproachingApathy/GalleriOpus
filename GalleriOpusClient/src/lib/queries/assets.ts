@@ -72,3 +72,15 @@ export const useAddAsset = () => {
         }
     })
 }
+
+export const useRemoveAsset = () => {
+    const queryClient = useQueryClient();
+
+    return useMutation(({ id }: {id: number}) => {
+        return api.assets.delete({ targets: [id]}).then(v => v.data).then(v => v);
+    }, {
+        onSuccess: () => {
+            queryClient.invalidateQueries(assetKeys.assets())
+        }
+    })
+}
