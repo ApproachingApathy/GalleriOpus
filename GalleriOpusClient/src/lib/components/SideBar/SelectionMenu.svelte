@@ -17,7 +17,7 @@
     
     const assetQuery = useGetAsset(0, { enabled: false })
     $: assetQuery.updateOptions({ enabled: isSingleSelection, queryKey: assetKeys.asset(($selection as Asset)?.id)})
-    // $: console.log(typeof $assetQuery.data)
+    $: console.log($assetQuery.data)
 
     const addTagMutation = useAddTagToAsset()
     const removeTagMutation = useRemoveTagFromAsset()

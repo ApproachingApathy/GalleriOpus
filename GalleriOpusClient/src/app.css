@@ -2,14 +2,10 @@
 @tailwind components;
 @tailwind utilities;
 
-html {
+html, body, #app {
     @apply h-screen
 }
 
-body, #app {
-    @apply h-full
-}
-
 #app {
-    @apply overflow-scroll
+    /* @apply overflow-scroll */
 }

@@ -1,11 +1,11 @@
 import { api } from "$lib/galleri-opus-api"
-import { useMutation, useQuery, useQueryClient, type UseQueryStoreResult } from "@sveltestack/svelte-query"
-import type { Asset } from "../../../../GalleriOpusServer/src/Database/typeorm/entity/Asset"
+import { useMutation, useQuery, useQueryClient } from "@sveltestack/svelte-query"
 
 export const assetKeys = {
-    assets: () => ["ASSETS"] as const,
-    asset: (id: number) => ["ASSETS", { id }] as const,
-    assetTags: (id: number) => ["ASSETS", { id }, "TAGS"] as const,
+    base: () => ["ASSETS"] as const,
+    assets: (tags?: string[]) => ["ASSETS", { tags }] as const,
+    asset: (id: number) => ["ASSETS", "SINGLE", { id }] as const,
+    assetTags: (id: number) => ["ASSETS", "SINGLE", { id }, "TAGS"] as const,
 }
 // :UseQueryStoreResult<Asset[], unknown, Asset[], readonly ["ASSETS"]>
 interface QueryOptions {
@@ -20,22 +20,33 @@ export const useGetAsset = (id: number, options: Partial<QueryOptions> = {}) => 
     const { enabled } = {...defaultQueryOptions, ...options}
 
     return useQuery(assetKeys.asset(id), ({ queryKey }) => {
-        return api.assets[`${queryKey[1].id}`].get().then(v => v.data).then(v => v)
+        return api.assets[`${queryKey[2].id}`].get().then(v => v.data).then(v => v)
     },
     {
         enabled,
     })
 }
 
-export const useGetAssets = () => {
-    return useQuery(assetKeys.assets(), () => {
-        return api.assets.get().then(v => v.data).then(v => v)
+interface UseGetAssetsParams {
+    tags?: string[]
+}
+
+const defaultUseGetAssetParams = {}
+
+export const useGetAssets = (options: UseGetAssetsParams = {}) => {
+    const { tags } = {...defaultQueryOptions, ...options}
+    
+    return useQuery(assetKeys.assets(tags), ({ queryKey }) => {
+        const query: Record<string, string> = {}
+        if (!!queryKey[1].tags) query.tags = queryKey[1].tags.join(',')
+        console.log(query)
+        return api.assets.get({ $query: query }).then(v => v.data).then(v => v)
     })
 }
 
 export const useGetAssetTags = (id: number) => {
     return useQuery(assetKeys.assetTags(id), ({ queryKey }) => {
-        return api.assets[`${queryKey[1].id}`].tags.get().then(v => v.data).then(v => v)
+        return api.assets[`${queryKey[2].id}`].tags.get().then(v => v.data).then(v => v)
     })
 }
 

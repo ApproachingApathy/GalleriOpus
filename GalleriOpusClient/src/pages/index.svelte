@@ -2,10 +2,15 @@
     import { api } from "$lib/galleri-opus-api"
     import { url } from "@roxi/routify";
     import { selection } from "$lib/store/selectedAsset"
+    import { filter } from "$lib/store/filter"
     import type { Asset } from "../../../GalleriOpusServer/src/Database/typeorm/entity/Asset";
-    import { useGetAssets } from "$lib/queries";
+    import { useGetAssets, assetKeys } from "$lib/queries";
 
-    let queryResult = useGetAssets() 
+    let queryResult = useGetAssets()
+
+    $: {
+        queryResult.updateOptions({ queryKey: assetKeys.assets($filter.tags) })
+    }
 
     $: isSelected = (asset: Asset) => {
         if (Array.isArray($selection)) {
