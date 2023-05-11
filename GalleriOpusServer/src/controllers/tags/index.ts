@@ -5,12 +5,15 @@ import { createResponse } from "../createResponse";
 export const tagController = (app: Elysia) => {
 	return app.group("/tags", (app) =>
 		app
-			.get("/", async ({ set }) => {
+			.get("", async ({ set }) => {
 				set.headers["Content-Type"] = "application/json"
 				const tags = await getTags()
 				return [...tags]
+			}, {
+				schema: {
+				}
 			})
-			.post("/",  async ({ body, set }) => {
+			.post("",  async ({ body, set }) => {
 				set.headers["Content-Type"] = "application/json"
 				const tags = await createTags({ tags: body.tags })
 				return [...tags]

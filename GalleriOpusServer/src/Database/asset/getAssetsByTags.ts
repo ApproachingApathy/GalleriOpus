@@ -10,7 +10,7 @@ interface GetAssetByTagsParams {
 	tags: string[];
 }
 
-export const getAssetsByTags = async ({ tags }: GetAssetByTagsParams) => {
+export const getAssetsByTags = async ({ tags }: GetAssetByTagsParams) => {	
 	const matchingAssets: Array<Asset> = await AssetRepo.createQueryBuilder().select("Asset.*").where(qb =>
 		{	
 			const assetTagQuery = AssetTagRepo.createQueryBuilder()
@@ -28,6 +28,8 @@ export const getAssetsByTags = async ({ tags }: GetAssetByTagsParams) => {
 			return `Asset.id IN ${subquery.getQuery()}`;
 		}
 	).execute()
+
+	if (matchingAssets.length < 1) return []
 
 	const assets = await AssetRepo.find({
 		relations: {
