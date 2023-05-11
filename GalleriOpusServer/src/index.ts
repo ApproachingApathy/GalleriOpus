@@ -14,8 +14,8 @@ const app = new Elysia()
 		})
 	)
 	.use(cors())
-	.use(assetController)
 	.use(tagController)
+	.use(assetController)
 	.get("/", () => "Galleri Opus")
 
 

@@ -6,6 +6,7 @@ import { IngestHandler, ImageResponseResult } from "../types/IngestHandler.js";
 import directDLIngestHandler from "../IngestPlugins/OpusDirect";
 import redditIngestHandler from "../IngestPlugins/OpusReddit/index.js";
 import { getContentTypeInfo } from "./getContentTypeInfo";
+import { localDataManager } from "../DataManagers/LocalDataManager";
 
 type FileName = string;
 
@@ -79,7 +80,7 @@ export const ingestManager: IngestManager = {
 		if (!contentTypeInfo.isImage)
 			throw new Error("The target url did not return an image.");
 
-		const fileUrl = await ingestManager._writeResponseToFS(
+		const fileUrl = await localDataManager.save(
 			`${nanoid()}.${contentTypeInfo.subtype}`,
 			result.imageResponse
 		);

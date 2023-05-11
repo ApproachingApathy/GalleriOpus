@@ -5,6 +5,7 @@ import Elysia, { t } from "elysia";
 import { createResponse } from "../createResponse";
 import { getImageBlob } from "./getImageBlob";
 import type { AssetTag } from "../../Database/typeorm/entity/AssetTags";
+import { localDataManager } from "../../DataManagers/LocalDataManager";
 
 export const assetController = (app: Elysia) => {
     return app.group("/assets", (app) => {
@@ -34,6 +35,7 @@ export const assetController = (app: Elysia) => {
                 }
             )
             .delete("", async ({ body, set }) => {
+
                 await deleteAssets({ targets: body.targets })
                 return undefined
             }, {
@@ -63,6 +65,9 @@ export const assetController = (app: Elysia) => {
                     },
                 }
             )
+            .get("library-size", async ({}) => {
+                return (await localDataManager.getTotalStored()).toMiB()
+            })
             .get(
                 "/:id",
                 async ({ params, set }) => {
