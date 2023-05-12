@@ -1,12 +1,13 @@
 import { exists } from "../utils/exists";
-import { join, resolve } from "path";
+import { join, resolve, dirname,  } from "path";
 import { nanoid } from "nanoid";
 
 import { IngestHandler, ImageResponseResult } from "../types/IngestHandler.js";
 import directDLIngestHandler from "../IngestPlugins/OpusDirect";
 import redditIngestHandler from "../IngestPlugins/OpusReddit/index.js";
 import { getContentTypeInfo } from "./getContentTypeInfo";
-import { localDataManager } from "../DataManagers/LocalStorageManager";
+import { localStorageManager } from "../DataManagers/LocalStorageManager";
+import { imageResizer } from "../ImageResizer/ImageResizer";
 
 type FileName = string;
 
@@ -73,17 +74,24 @@ export const ingestManager: IngestManager = {
 		const contentType =
 			result.imageResponse.headers.get("Content-Type") ?? undefined;
 
-		if (!contentType) throw new Error("Failed to verify content-typed");
+		if (!contentType) throw new Error("Failed to verify content-type.");
 
 		const contentTypeInfo = getContentTypeInfo(contentType);
 
 		if (!contentTypeInfo.isImage)
 			throw new Error("The target url did not return an image.");
 
-		const fileUrl = await localDataManager.save(
-			`${nanoid()}.${contentTypeInfo.subtype}`,
+		const folderName = nanoid()
+		const fileUrl = await localStorageManager.save(
+			`${folderName}/full.${contentTypeInfo.subtype}`,
 			result.imageResponse
 		);
+
+		await imageResizer.createThumbnail(fileUrl.pathname, async (tempThumbNailUrl, storage) => {
+			const thumbnail = Bun.file(tempThumbNailUrl.pathname)
+			await localStorageManager.save(`${folderName}/thumbnail.webp`, thumbnail)
+			storage.delete(tempThumbNailUrl.toString())
+		})
 
 		return {
 			fileUrl,

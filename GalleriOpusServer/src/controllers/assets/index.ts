@@ -5,7 +5,7 @@ import Elysia, { t } from "elysia";
 import { createResponse } from "../createResponse";
 import { getImageBlob } from "./getImageBlob";
 import type { AssetTag } from "../../Database/typeorm/entity/AssetTags";
-import { localDataManager } from "../../DataManagers/LocalStorageManager";
+import { localStorageManager } from "../../DataManagers/LocalStorageManager";
 
 export const assetController = (app: Elysia) => {
     return app.group("/assets", (app) => {
@@ -66,7 +66,7 @@ export const assetController = (app: Elysia) => {
                 }
             )
             .get("library-size", async ({}) => {
-                return (await localDataManager.getTotalStored()).toMiB()
+                return (await localStorageManager.getTotalStored()).toMiB()
             })
             .get(
                 "/:id",
@@ -95,7 +95,7 @@ export const assetController = (app: Elysia) => {
                     const asset = await getAsset(Number.parseInt(params.id))
 
                     if (!asset) return createResponse("Asset not found", 404, "text/plain")
-                    const blob = getImageBlob(new URL(asset.url))
+                    const blob = await localStorageManager.getFile(asset.url)
                     return createResponse(blob.stream(), 200, blob.type)
                 },
                 {

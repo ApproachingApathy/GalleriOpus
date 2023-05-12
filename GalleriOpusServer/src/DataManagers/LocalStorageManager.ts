@@ -1,14 +1,18 @@
-import { join, resolve } from "path";
-import { unlink as fsUnlink, readdir } from "node:fs"
+import { join, resolve, dirname } from "path";
+import { unlink, readdir, mkdir, access } from "node:fs/promises"
 import { StorageManager } from "../types/StorageManager";
 import { promisify } from "node:util";
 import { FileSize } from "./FileSize";
-import { Dirent } from "fs";
+import { Dirent, fstat } from "fs";
 
-const unlink = promisify(fsUnlink)
+// const unlink = promisify(fsUnlink)
 
 export class LocalDataManager implements StorageManager {
-    private localAssetPath = resolve(process.env.ASSET_DOWNLOAD_PATH)
+    private localAssetPath: string
+
+    constructor(localAssetPath: string) {
+        this.localAssetPath = resolve(localAssetPath)
+    }
 
     private doesTargetAssignedDir(filePath: string): boolean {
         return resolve(filePath).startsWith(this.localAssetPath)
@@ -20,10 +24,7 @@ export class LocalDataManager implements StorageManager {
     }
     
     private async getFolderStorage(folderPath: string): Promise<number> {
-        const files = await new Promise<Dirent[]>((res, rej) => readdir(resolve(folderPath), { withFileTypes: true }, (err, files) => {
-            if (err) return rej(err)
-            res(files)
-        }))
+        const files = await readdir(resolve(folderPath), { withFileTypes: true })
 
         let accumulator = 0
         for (const item of files) {
@@ -39,12 +40,25 @@ export class LocalDataManager implements StorageManager {
 
         return accumulator
     }
+
+    //TODO: sanitize file name
+    createFilePath(fileName: string) {
+        const filePath = resolve(join(this.localAssetPath, fileName))
+        return filePath
+    };
     
     save(fileName: string, data: Blob | TypedArray | ArrayBufferLike | string | BlobPart[] ): Promise<URL>
     save(fileName: string, data: Response): Promise<URL>
     // tslint:disable-next-line:unified-signatures
     async save(fileName: string, data: unknown) {
-        const filePath = resolve(join(this.localAssetPath, fileName))
+        const filePath = this.createFilePath(fileName)
+        const directory = dirname(filePath)
+        try {
+            await access(directory)
+        } catch(e) {
+            await mkdir(directory, { recursive: true })
+        }
+
         await Bun.write(filePath, data as Response)
         return new URL(`file://${filePath}`)
     }
@@ -75,6 +89,13 @@ export class LocalDataManager implements StorageManager {
         return file
     }
 
+    async getContainingFolderPath(fileUrl: string) {
+        const url = new URL(fileUrl)
+        const filePath = url.pathname
+        const folderPath = dirname(filePath)
+        this.checkValidWritePath(folderPath)
+        return folderPath
+    }
 
     async getTotalStored() {
         const size = await this.getFolderStorage(this.localAssetPath)
@@ -83,4 +104,4 @@ export class LocalDataManager implements StorageManager {
     }
 }
 
-export const localDataManager = new LocalDataManager()
+export const localStorageManager = new LocalDataManager(process.env.ASSET_DOWNLOAD_PATH)
