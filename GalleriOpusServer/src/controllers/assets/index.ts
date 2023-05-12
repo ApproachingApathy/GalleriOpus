@@ -5,7 +5,7 @@ import Elysia, { t } from "elysia";
 import { createResponse } from "../createResponse";
 import { getImageBlob } from "./getImageBlob";
 import type { AssetTag } from "../../Database/typeorm/entity/AssetTags";
-import { localDataManager } from "../../DataManagers/LocalDataManager";
+import { localDataManager } from "../../DataManagers/LocalStorageManager";
 
 export const assetController = (app: Elysia) => {
     return app.group("/assets", (app) => {

@@ -1,13 +1,13 @@
 import { join, resolve } from "path";
 import { unlink as fsUnlink, readdir } from "node:fs"
-import { DataManager } from "../types/DataManager";
+import { StorageManager } from "../types/StorageManager";
 import { promisify } from "node:util";
 import { FileSize } from "./FileSize";
 import { Dirent } from "fs";
 
 const unlink = promisify(fsUnlink)
 
-export class LocalDataManager implements DataManager {
+export class LocalDataManager implements StorageManager {
     private localAssetPath = resolve(process.env.ASSET_DOWNLOAD_PATH)
 
     private doesTargetAssignedDir(filePath: string): boolean {

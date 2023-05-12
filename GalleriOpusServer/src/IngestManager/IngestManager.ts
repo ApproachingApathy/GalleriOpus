@@ -6,7 +6,7 @@ import { IngestHandler, ImageResponseResult } from "../types/IngestHandler.js";
 import directDLIngestHandler from "../IngestPlugins/OpusDirect";
 import redditIngestHandler from "../IngestPlugins/OpusReddit/index.js";
 import { getContentTypeInfo } from "./getContentTypeInfo";
-import { localDataManager } from "../DataManagers/LocalDataManager";
+import { localDataManager } from "../DataManagers/LocalStorageManager";
 
 type FileName = string;
 

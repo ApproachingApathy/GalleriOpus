@@ -12,7 +12,7 @@ export interface FileSize {
     toGiB(): GibiBytes
 }
 
-export interface DataManager {
+export interface StorageManager {
     save(fileName: string, data: Blob | TypedArray | ArrayBufferLike | string | BlobPart[] | Response): Promise<URL>
     delete: (fileUrl: string) => Promise<void>,
     getFile: (fileUrl: string) => Promise<FileBlob>

@@ -1,4 +1,4 @@
-import { Bytes } from "../types/DataManager"
+import { Bytes } from "../types/StorageManager"
 
 export class FileSize implements FileSize  {
     constructor(size: Bytes) {
