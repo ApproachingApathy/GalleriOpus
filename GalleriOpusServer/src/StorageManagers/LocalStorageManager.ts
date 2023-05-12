@@ -3,7 +3,7 @@ import { unlink, readdir, mkdir, access } from "node:fs/promises"
 import { StorageManager } from "../types/StorageManager";
 import { promisify } from "node:util";
 import { FileSize } from "./FileSize";
-import { Dirent, fstat } from "fs";
+import { Dirent, accessSync, fstat, mkdirSync } from "fs";
 
 // const unlink = promisify(fsUnlink)
 
@@ -12,6 +12,7 @@ export class LocalDataManager implements StorageManager {
 
     constructor(localAssetPath: string) {
         this.localAssetPath = resolve(localAssetPath)
+        this.createLocalAssetPathDirectorIfNotExists()
     }
 
     private doesTargetAssignedDir(filePath: string): boolean {
@@ -39,6 +40,14 @@ export class LocalDataManager implements StorageManager {
         } 
 
         return accumulator
+    }
+
+    private async createLocalAssetPathDirectorIfNotExists() {
+        try {
+            accessSync(this.localAssetPath)
+        } catch {
+            mkdirSync(this.localAssetPath)
+        }
     }
 
     //TODO: sanitize file name

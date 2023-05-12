@@ -1,5 +1,5 @@
 import { nanoid } from "nanoid"
-import { LocalDataManager } from "../DataManagers/LocalStorageManager"
+import { LocalDataManager } from "../StorageManagers/LocalStorageManager"
 import { StorageManager } from "../types/StorageManager"
 
 
