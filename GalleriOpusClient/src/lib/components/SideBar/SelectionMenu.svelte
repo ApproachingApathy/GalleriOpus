@@ -17,7 +17,6 @@
     
     const assetQuery = useGetAsset(0, { enabled: false })
     $: assetQuery.updateOptions({ enabled: isSingleSelection, queryKey: assetKeys.asset(($selection as Asset)?.id)})
-    $: console.log($assetQuery.data)
 
     const addTagMutation = useAddTagToAsset()
     const removeTagMutation = useRemoveTagFromAsset()
@@ -66,6 +65,7 @@
                                 if (isDeletePrimed) {
                                     removeAsset($assetQuery.data.id)
                                     isDeletePrimed = false;
+                                    return;
                                 }
                                 isDeletePrimed = true;
                             }}>Delete</button>

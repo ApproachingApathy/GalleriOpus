@@ -26,13 +26,13 @@
     }
 </script>
 
-<div class="border-b py-3">
+<div class="border-b py-3 mb-2">
     <div class="text-center">
         <h2 class="text-xs font-semibold">Tags</h2>
     </div>
 </div>
 
-<div class="flex flex-col">
+<div class="flex flex-col divide-y border">
     {#if $tagQuery.isSuccess}
         {#each $tagQuery.data as tag (tag.id)}
             <button type="button" on:click={() => {
