@@ -51,25 +51,25 @@ export class LocalDataManager implements StorageManager {
     }
 
     //TODO: sanitize file name
-    createFilePath(fileName: string) {
+    createFileUrl(fileName: string) {
         const filePath = resolve(join(this.localAssetPath, fileName))
-        return filePath
+        return new URL(`file://${filePath}`)
     };
     
     save(fileName: string, data: Blob | TypedArray | ArrayBufferLike | string | BlobPart[] ): Promise<URL>
     save(fileName: string, data: Response): Promise<URL>
     // tslint:disable-next-line:unified-signatures
     async save(fileName: string, data: unknown) {
-        const filePath = this.createFilePath(fileName)
-        const directory = dirname(filePath)
+        const fileUrl = this.createFileUrl(fileName)
+        const directory = dirname(fileUrl.pathname)
         try {
             await access(directory)
         } catch(e) {
             await mkdir(directory, { recursive: true })
         }
 
-        await Bun.write(filePath, data as Response)
-        return new URL(`file://${filePath}`)
+        await Bun.write(fileUrl.pathname, data as Response)
+        return fileUrl
     }
 
 
@@ -98,6 +98,18 @@ export class LocalDataManager implements StorageManager {
         return file
     }
 
+    async doesFileExist(fileUrl: string) {
+        const url = new URL(fileUrl)
+        this.checkValidWritePath(url.pathname)
+
+        try {
+            await access(url.pathname)
+            return true
+        } catch {}
+        
+        return false;
+    };
+
     async getContainingFolderPath(fileUrl: string) {
         const url = new URL(fileUrl)
         const filePath = url.pathname
@@ -105,6 +117,13 @@ export class LocalDataManager implements StorageManager {
         this.checkValidWritePath(folderPath)
         return folderPath
     }
+
+    async getRelativeContainingFolderPath(fileUrl: string) {
+        const fullPath = await this.getContainingFolderPath(fileUrl)
+        let slicedPath = fullPath.replace(this.localAssetPath, "")
+        if (slicedPath.startsWith("/")) slicedPath = slicedPath.slice(1)
+        return slicedPath
+    };
 
     async getTotalStored() {
         const size = await this.getFolderStorage(this.localAssetPath)

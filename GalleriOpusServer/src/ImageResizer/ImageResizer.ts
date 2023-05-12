@@ -31,7 +31,7 @@ class ImageResizer {
             if (this.activeCount < this.maxConcurrency) {
                 const nextInQueue = this.queue.shift()
                 this.activeCount = this.activeCount + 1
-                const outputUrl = new URL("file://" + this.localStorage.createFilePath(`${nanoid()}.webp`))
+                const outputUrl = this.localStorage.createFileUrl(`${nanoid()}.webp`)
                 try {
                     await this.resizeImage(filePath, outputUrl.pathname)
                     onComplete(outputUrl, this.localStorage)
@@ -63,6 +63,7 @@ class ImageResizer {
         ])
 
         const result = await subprocess.exited
+        console.log(result)
 
         if (result > 0) throw new Error(`Failed to resize ${filePath}`)
     }

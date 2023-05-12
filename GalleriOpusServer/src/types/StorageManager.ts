@@ -13,10 +13,11 @@ export interface FileSize {
 }
 
 export interface StorageManager {
-    createFilePath: (fileName: string) => string
+    createFileUrl: (fileName: string) => URL
     save(fileName: string, data: Blob | TypedArray | ArrayBufferLike | string | BlobPart[] | Response): Promise<URL>
     delete: (fileUrl: string) => Promise<void>
     getFile: (fileUrl: string) => Promise<FileBlob>
+    doesFileExist: (fileUrl: string) => Promise<boolean>
     getContainingFolderPath: (fileUrl: string) => Promise<string>
     getSize: (fileUrl: string) => Promise<FileSize>
     getTotalStored: () => Promise<FileSize>

@@ -6,6 +6,7 @@ import { createResponse } from "../createResponse";
 import { getImageBlob } from "./getImageBlob";
 import type { AssetTag } from "../../Database/typeorm/entity/AssetTags";
 import { localStorageManager } from "../../StorageManagers/LocalStorageManager";
+import { ImageSet } from "../../ImageSet/ImageSet";
 
 export const assetController = (app: Elysia) => {
     return app.group("/assets", (app) => {
@@ -97,6 +98,26 @@ export const assetController = (app: Elysia) => {
                     if (!asset) return createResponse("Asset not found", 404, "text/plain")
                     const blob = await localStorageManager.getFile(asset.url)
                     return createResponse(blob.stream(), 200, blob.type)
+                },
+                {
+                    schema: {
+                        params: t.Object({
+                            id: t.String()
+                        })
+                    }
+                }
+            )
+            .get(
+                "/:id/thumbnail",
+                async ({ params }) => {
+                    const asset = await getAsset(Number.parseInt(params.id))
+                    
+                    if (!asset) return createResponse("Asset not found", 404, "text/plain")
+
+                    const imageSet = new ImageSet(asset.url)
+                    const blob = await imageSet.getThumbnailOrFallbackToFull()
+                    return createResponse(blob.stream(), 200, blob.type)
+                    
                 },
                 {
                     schema: {

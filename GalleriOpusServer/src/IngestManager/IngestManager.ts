@@ -86,7 +86,6 @@ export const ingestManager: IngestManager = {
 			`${folderName}/full.${contentTypeInfo.subtype}`,
 			result.imageResponse
 		);
-
 		await imageResizer.createThumbnail(fileUrl.pathname, async (tempThumbNailUrl, storage) => {
 			const thumbnail = Bun.file(tempThumbNailUrl.pathname)
 			await localStorageManager.save(`${folderName}/thumbnail.webp`, thumbnail)
