@@ -37,7 +37,7 @@
                 selection.set(asset)
             }}>
                 <div class="h-5/6 flex justify-center items-center">
-                    <img class="h-full object-contain" src="http://127.0.0.1:3000/assets/{asset.id}/image" loading="lazy" alt=""/>
+                    <img class="h-full object-contain" src="http://127.0.0.1:3000/assets/{asset.id}/thumbnail" loading="lazy" alt=""/>
                 </div>    
                 <div class="flex p-2">
                     <div class="w-full">
