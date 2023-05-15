@@ -83,7 +83,7 @@ export const ingestManager: IngestManager = {
 
 		const folderName = nanoid()
 		const fileUrl = await localStorageManager.save(
-			`${folderName}/full.${contentTypeInfo.subtype}`,
+			`${folderName}/original.${contentTypeInfo.subtype}`,
 			result.imageResponse
 		);
 		await imageResizer.createThumbnail(fileUrl.pathname, async (tempThumbNailUrl, storage) => {

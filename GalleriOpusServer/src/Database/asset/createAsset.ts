@@ -6,6 +6,7 @@ import { db } from "../db";
 import { Asset } from "../typeorm/entity/Asset";
 import { AssetTag } from "../typeorm/entity/AssetTags";
 import { Tag } from "../typeorm/entity/Tag";
+import { formatTag } from "../../utils/formatTag";
 
 const AssetRepo = db.getRepository(Asset);
 const TagRepo = db.getRepository(Tag);
@@ -29,7 +30,7 @@ export const createAsset = async ({ url, tags }: CreateAssetParams) => {
 	);
 	const tagData = tagsWithoutExisting.map((t) => {
 		const tag = TagRepo.create();
-		tag.value = t;
+		tag.value = formatTag(t);
 		return tag;
 	});
 	const insertedTags = await TagRepo.save(tagData);

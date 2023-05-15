@@ -35,6 +35,7 @@ const redditIngestHandler: IngestHandler = {
 		return {
 			imageResponse: imageResponse,
 			tags: [
+				`title:${post.data.title}`,
 				`source:reddit`,
 				`downloader:${INGEST_SOURCE}`,
 				`url:${url}`,

@@ -7,6 +7,7 @@ import { Asset } from "../typeorm/entity/Asset";
 import { AssetTag } from "../typeorm/entity/AssetTags";
 import { Tag } from "../typeorm/entity/Tag";
 import { AssetID } from "./types"
+import { formatTag } from "../../utils/formatTag";
 
 const AssetRepo = db.getRepository(Asset);
 const TagRepo = db.getRepository(Tag);
@@ -34,7 +35,7 @@ export const applyTagsToAsset = async ({ asset: assetId, tags }: ApplyTagToAsset
     const newAssetTags = tagsWithoutExisting.map(t => {
         const at = new AssetTag()
         const tag = new Tag()
-        tag.value = t
+        tag.value = formatTag(t)
         at.tag = tag
         return at
     })
