@@ -1,4 +1,4 @@
-import { Elysia, SCHEMA, DEFS } from "elysia";
+import { Elysia } from "elysia";
 import { swagger } from "@elysiajs/swagger";
 import { cors } from "@elysiajs/cors"
 
@@ -17,9 +17,7 @@ const app = new Elysia()
 	.use(tagController)
 	.use(assetController)
 	.get("/", () => "Galleri Opus")
-
-
-app.listen(3000);
+	.listen(3000);
 
 console.log(`Elysia is running at ${app.server?.hostname}:${app.server?.port}`);
 

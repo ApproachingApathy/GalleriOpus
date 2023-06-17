@@ -42,7 +42,7 @@ export const assetController = (app: Elysia) => {
 				}
 			)
 			.delete(
-				"/",
+				"",
 				async ({ body, set }) => {
 					await deleteAssets({ targets: body.targets });
 					return undefined;
@@ -71,7 +71,7 @@ export const assetController = (app: Elysia) => {
 					}),
 				}
 			)
-			.get("library-size", async ({}) => {
+			.get("/library-size", async ({}) => {
 				return (await localStorageManager.getTotalStored()).toMiB();
 			})
 			.get(

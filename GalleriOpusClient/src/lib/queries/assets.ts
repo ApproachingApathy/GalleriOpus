@@ -53,7 +53,13 @@ export const useGetAssetTags = (id: number) => {
 export const useAddTagToAsset = () => {
     const queryClient = useQueryClient();
     return useMutation(({id, tags}: { id: number; tags: string[]}) => {
-        return api.assets[`${id}`].tags.post({ tags }).then(v => v.data).then(v => v)
+        api.assets[`${id}`].tags.post({ $fetch: {
+            body: JSON.stringify({tags}),
+            headers: {
+                "Content-Type": "application/json"
+            }
+        }})
+        return api.assets[`${id}`].tags.post({  }).then(v => v.data).then(v => v)
     }, {
         onSuccess: ({ id }) => {
             queryClient.invalidateQueries(assetKeys.asset(id))
@@ -64,7 +70,7 @@ export const useAddTagToAsset = () => {
 export const useRemoveTagFromAsset = () => {
     const queryClient = useQueryClient();
     return useMutation(({ id, tags }: {id: number, tags: string[]} ) => {
-        return api.assets[`${id}`].tags.delete({ tags }).then(v => v.data).then(v => v)
+        return api.assets[`${id}`].tags.delete({ $fetch: { body: JSON.stringify({tags}) } }).then(v => v.data).then(v => v)
     }, {
         onSuccess: (_, {id}) => {
             queryClient.invalidateQueries(assetKeys.asset(id))
@@ -76,7 +82,7 @@ export const useAddAsset = () => {
     const queryClient = useQueryClient();
 
     return useMutation(({ url }: { url: string }) => {
-        return api.assets.ingest.post(({ url, options: {}})).then(v => v.data).then(v => v);
+        return api.assets.ingest.post(({$fetch: { body: JSON.stringify({ url, options: {}}), headers: [["Content-Type", "application/json"]]}})).then(v => v.data).then(v => v);
     }, {
         onSuccess: () => {
             queryClient.invalidateQueries(assetKeys.assets())
@@ -88,7 +94,7 @@ export const useRemoveAsset = () => {
     const queryClient = useQueryClient();
 
     return useMutation(({ id }: {id: number}) => {
-        return api.assets.delete({ targets: [id]}).then(v => v.data).then(v => v);
+        return api.assets.delete({ $fetch: { body: JSON.stringify({ targets: [id]}), headers: [["Content-Type", "application/json"]] }}).then(v => v.data).then(v => v);
     }, {
         onSuccess: () => {
             queryClient.invalidateQueries(assetKeys.assets())
