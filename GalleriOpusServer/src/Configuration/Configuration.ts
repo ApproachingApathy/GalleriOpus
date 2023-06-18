@@ -66,7 +66,6 @@ export class Configuration {
 
         const mergedConfig: AppConfiguration = mergeObjects(defaultPlatformConfig, configFileData)
 
-        // console.log("made it")
         return new this(mergedConfig, configFilePath)
         
     }

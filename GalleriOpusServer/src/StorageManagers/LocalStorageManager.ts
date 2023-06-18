@@ -15,7 +15,6 @@ export class LocalDataManager implements StorageManager {
     constructor(localAssetPath: string) {
         this.localAssetPath = resolve(localAssetPath)
         this.createLocalAssetPathDirectorIfNotExists()
-        console.log("made it 2")
     }
 
     private doesTargetAssignedDir(filePath: string): boolean {
@@ -38,7 +37,6 @@ export class LocalDataManager implements StorageManager {
             }
             
             const file = Bun.file(resolve(join(folderPath, item.name)))
-            // console.log(item.name, file.size)
             accumulator =  accumulator + file.size
         } 
 

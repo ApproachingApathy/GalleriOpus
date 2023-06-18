@@ -19,7 +19,6 @@ export const assetController = (app: Elysia) => {
 			.get(
 				"",
 				async ({ query, set }) => {
-					console.log("get assets")
 					if (query.tags) {
 						const tags = query.tags.split(",");
 						const assets = await getAssetsByTags({ tags });
@@ -53,7 +52,6 @@ export const assetController = (app: Elysia) => {
 				async ({ body, set }) => {
 					set.headers["Content-Type"] = "application/json";
 					const ingestResult = await ingestManager.ingest(body.url);
-					console.log(ingestResult)
 					const asset = await createAsset({
 						tags: ingestResult.tags,
 						url: ingestResult.fileUrl.toString(),

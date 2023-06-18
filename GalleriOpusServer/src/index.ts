@@ -1,4 +1,3 @@
-// console.log("top")
 import { Elysia } from "elysia";
 import { swagger } from "@elysiajs/swagger";
 import { cors } from "@elysiajs/cors"
@@ -8,7 +7,6 @@ import { ingestManager } from "./IngestManager/IngestManager";
 import { assetController } from "./controllers/assets";
 import { tagController } from "./controllers/tags";
 ingestManager.initialize()
-//  console.log("made it")
 const app = new Elysia()
 	.use(
 		swagger({
