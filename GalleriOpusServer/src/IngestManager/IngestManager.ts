@@ -32,6 +32,7 @@ export const ingestManager
 	initialize: () => {
 		ingestManager.registerHandler(redditIngestHandler);
 		ingestManager.registerHandler(directDLIngestHandler);
+		console.log("Made 3")
 	},
 
 	_ingestHandlers: {},
@@ -47,7 +48,7 @@ export const ingestManager
 	registerHandler: (handler: IngestHandler) => {
 		const existingIngestHandlerAtName =
 			ingestManager._ingestHandlers[handler.name];
-		console.log(existingIngestHandlerAtName);
+		// console.log(existingIngestHandlerAtName);
 
 		if (exists(existingIngestHandlerAtName)) {
 			throw new Error(`Ingestor ${handler.name} already exists.`);
@@ -59,6 +60,7 @@ export const ingestManager
 
 		ingestManager._ingestHandlers[handler.name] = handler;
 		ingestManager._urlHooks.push(...hooks);
+
 	},
 
 	ingest: async (url: string) => {

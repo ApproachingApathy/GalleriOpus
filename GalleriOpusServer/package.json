@@ -8,11 +8,13 @@
   "dependencies": {
     "@elysiajs/cors": "^0.5.2",
     "@elysiajs/swagger": "^0.5.2",
+    "@prisma/client": "^4.15.0",
     "elysia": "^0.5.18",
     "mysql2": "^3.2.0",
     "nanoid": "^4.0.1",
     "reflect-metadata": "^0.1.13",
-    "typeorm": "^0.3.12"
+    "typeorm": "^0.3.16",
+    "zod": "^3.21.4"
   },
   "devDependencies": {
     "@types/better-sqlite3": "^7.6.3",

@@ -11,7 +11,6 @@ import type { Asset } from "../../Database/typeorm/entity/Asset";
 import { ingestManager } from "../../IngestManager/IngestManager";
 import Elysia, { t } from "elysia";
 import { createResponse } from "../createResponse";
-import { getImageBlob } from "./getImageBlob";
 import type { AssetTag } from "../../Database/typeorm/entity/AssetTags";
 import { localStorageManager } from "../../StorageManagers/LocalStorageManager";
 import { ImageSet } from "../../ImageSet/ImageSet";
@@ -22,8 +21,7 @@ export const assetController = (app: Elysia) => {
 			.get(
 				"",
 				async ({ query, set }) => {
-					set.headers["Content-Type"] = "application/json";
-
+					console.log("get assets")
 					let body: Asset[] = [];
 					if (query.tags) {
 						const tags = query.tags.split(",");
@@ -58,6 +56,7 @@ export const assetController = (app: Elysia) => {
 				async ({ body, set }) => {
 					set.headers["Content-Type"] = "application/json";
 					const ingestResult = await ingestManager.ingest(body.url);
+					console.log(ingestResult)
 					const asset = await createAsset({
 						tags: ingestResult.tags,
 						url: ingestResult.fileUrl.toString(),
@@ -152,7 +151,7 @@ export const assetController = (app: Elysia) => {
 				async ({ body, params: { id }, set }) => {
 					set.headers["Content-Type"] = "application/json";
 					const asset = await applyTagsToAsset({
-						asset: Number.parseInt(id),
+						assetId: Number.parseInt(id),
 						tags: body.tags,
 					});
 					return { ...asset };

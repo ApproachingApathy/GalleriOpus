@@ -14,18 +14,18 @@ export const tagController = (app: Elysia) => {
 				},
 				{}
 			)
-			.post(
-				"",
-				async ({ body, set }) => {
-					set.headers["Content-Type"] = "application/json";
-					const tags = await createTags({ tags: body.tags });
-					return [...tags];
-				},
-				{
-					body: t.Object({
-						tags: t.Array(t.String()),
-					}),
-				}
-			)
+			// .post(
+			// 	"",
+			// 	async ({ body, set }) => {
+			// 		set.headers["Content-Type"] = "application/json";
+			// 		const tags = await createTags({ tags: body.tags });
+			// 		return [...tags];
+			// 	},
+			// 	{
+			// 		body: t.Object({
+			// 			tags: t.Array(t.String()),
+			// 		}),
+			// 	}
+			// )
 	);
 };

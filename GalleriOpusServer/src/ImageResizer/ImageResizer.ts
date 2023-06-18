@@ -63,13 +63,13 @@ class ImageResizer {
         ])
 
         const result = await subprocess.exited
-        console.log(result)
+        // console.log(result)
 
         if (result > 0) throw new Error(`Failed to resize ${filePath}`)
     }
 
     private logError(error: string) {
-        console.error(error)
+        // console.error(error)
     }
 }
 

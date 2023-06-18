@@ -8,15 +8,20 @@ import { AssetTag } from "../typeorm/entity/AssetTags";
 import { Tag } from "../typeorm/entity/Tag";
 import { AssetID } from "./types";
 
-const AssetRepo = db.getRepository(Asset);
-const TagRepo = db.getRepository(Tag);
-const AssetTagRepo = db.getRepository(AssetTag);
+// const AssetRepo = db.getRepository(Asset);
+// const TagRepo = db.getRepository(Tag);
+// const AssetTagRepo = db.getRepository(AssetTag);
 
 interface DeleteAssetParams {
     targets: AssetID[]
 }
 
 export const deleteAssets = async ({ targets }: DeleteAssetParams ) => {
-    const assets = await AssetRepo.find({ where: targets.map(t => ({ id: t })) });
-    await AssetRepo.remove(assets)
+    await db.asset.deleteMany({ where: {
+        OR: [
+            ...targets.map((t) => ({
+                id: t
+            }))
+        ]
+    }})
 } 

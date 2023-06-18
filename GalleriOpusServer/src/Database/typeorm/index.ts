@@ -12,7 +12,7 @@ export const AppDataSource = new DataSource({
 	url: process.env.DATABASE_URL,
 	entities: [Tag, Asset, AssetTag],
 	synchronize: true,
-	logging: false,
+	logging: "all",
 });
 
 AppDataSource.initialize().then(() => console.log("DB Connected"));

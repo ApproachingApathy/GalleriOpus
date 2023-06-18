@@ -5,6 +5,7 @@ import { promisify } from "node:util";
 import { FileSize } from "./FileSize";
 import { Dirent, accessSync, fstat, mkdirSync } from "fs";
 import { appConfig } from "../Configuration/Configuration";
+import { FileBlob } from "bun";
 
 // const unlink = promisify(fsUnlink)
 
@@ -14,6 +15,7 @@ export class LocalDataManager implements StorageManager {
     constructor(localAssetPath: string) {
         this.localAssetPath = resolve(localAssetPath)
         this.createLocalAssetPathDirectorIfNotExists()
+        console.log("made it 2")
     }
 
     private doesTargetAssignedDir(filePath: string): boolean {
@@ -36,7 +38,7 @@ export class LocalDataManager implements StorageManager {
             }
             
             const file = Bun.file(resolve(join(folderPath, item.name)))
-            console.log(item.name, file.size)
+            // console.log(item.name, file.size)
             accumulator =  accumulator + file.size
         } 
 

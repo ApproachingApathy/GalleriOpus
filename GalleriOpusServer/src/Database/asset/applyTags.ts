@@ -3,51 +3,74 @@ import {
 } from "typeorm";
 import { exists } from "../../utils/exists";
 import { db } from "../db";
+import { Prisma } from "@prisma/client"
 import { Asset } from "../typeorm/entity/Asset";
 import { AssetTag } from "../typeorm/entity/AssetTags";
 import { Tag } from "../typeorm/entity/Tag";
 import { AssetID } from "./types"
 import { formatTag } from "../../utils/formatTag";
 
-const AssetRepo = db.getRepository(Asset);
-const TagRepo = db.getRepository(Tag);
-const AssetTagRepo = db.getRepository(AssetTag);
+// const AssetRepo = db.getRepository(Asset);
+// const TagRepo = db.getRepository(Tag);
+// const AssetTagRepo = db.getRepository(AssetTag);
 
 interface ApplyTagToAssetParams {
-    asset: AssetID,
+    assetId: AssetID,
     tags: string[]
 }
 
-export const applyTagsToAsset = async ({ asset: assetId, tags }: ApplyTagToAssetParams) => {
-    const asset = await AssetRepo.findOne({ where: { id: assetId }, relations: {
+const isKnownError = (item: any): item is Prisma.PrismaClientKnownRequestError => {
+    return item
+}
+
+export const applyTagsToAsset = async ({ assetId: assetId, tags }: ApplyTagToAssetParams) => {
+    const newTags: Prisma.AssetTagCreateInput[] = tags.map(t => ({
+        
+        tag: {
+            connectOrCreate: {
+                where: {
+                    value: t
+                },
+                create: {
+                    value: t
+                }
+            }
+        },
+        asset: {
+            connect: {
+                id: assetId
+            }
+        }
+    }))
+
+    for (let at of newTags) {
+        try {
+            await db.assetTag.create({
+                data: at
+            })
+        } catch (e) {
+            if (e instanceof Prisma.PrismaClientKnownRequestError) {
+                switch (e.code) {
+                    case "P2018":
+                        throw new Error("Asset not Found")
+                        break;
+                    default:
+                        break;
+
+                }
+            }
+        }
+    }
+
+    const updatedAsset = await db.asset.findUnique({ where: {
+        id: assetId
+    }, include: {
         tags: {
-            tag: true
+            include: {
+                tag: true
+            }
         }
     }})
 
-    if (!asset) throw new Error("Asset doesn't exist.")
-
-    const existingTags = await TagRepo.find({ where: tags.map(t => ({ value: t })) })
-    const tagsWithoutExisting = tags.filter(t => !exists(existingTags.find(existingTag => t == existingTag.value)))
-
-    
-
-    const newAssetTags = tagsWithoutExisting.map(t => {
-        const at = new AssetTag()
-        const tag = new Tag()
-        tag.value = formatTag(t)
-        at.tag = tag
-        return at
-    })
-
-    const newAssetTagsLinks = existingTags.map(t => {
-        const at = new AssetTag()
-        at.tag = t
-        return at
-    })
-
-
-    asset.tags.push(...newAssetTags, ...newAssetTagsLinks)
-
-    return AssetRepo.save(asset)
+    return updatedAsset
 }

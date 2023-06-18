@@ -3,6 +3,7 @@ import { mkdir } from "node:fs/promises"
 import { join, resolve } from "node:path"
 import { platform } from "node:os"
 import { mergeObjects } from "./mergeObjects"
+// import { z } from "zod"
 
 const CONFIG_FILE_NAME = "galleri-opus.toml"
 const SUB_FOLDER = "galleri-opus"
@@ -15,6 +16,15 @@ export interface AppConfiguration {
         }
     }
 }
+
+// const configSchema = z.object({
+//     temporary_directory: z.string(),
+//     storage: z.object({
+//         local: z.object({
+//             library_directory: z.string()
+//         })
+//     }) 
+// })
 
 export class Configuration {
     config_file: string;
@@ -49,12 +59,14 @@ export class Configuration {
             this.writeFile(configFilePath, "")
         }
 
-        const configFileData = (await import(configFilePath)).default
+        const configFileData: AppConfiguration = (await import(configFilePath)).default
+        // this.validateConfig(configFileData)
 
         const defaultPlatformConfig = this.getPlatformConfig()
 
         const mergedConfig: AppConfiguration = mergeObjects(defaultPlatformConfig, configFileData)
 
+        // console.log("made it")
         return new this(mergedConfig, configFilePath)
         
     }
@@ -91,6 +103,10 @@ export class Configuration {
 
         return config
     }
+
+    // private static validateConfig(config: AppConfiguration): void {
+    //     configSchema.parse(config)
+    // } 
 
     private static async readFile(filePath: string) {
         return Bun.file(filePath)
