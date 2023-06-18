@@ -7,11 +7,9 @@ import {
 	getAssetsByTags,
 	removeTagsFromAsset,
 } from "../../Database/asset";
-import type { Asset } from "../../Database/typeorm/entity/Asset";
 import { ingestManager } from "../../IngestManager/IngestManager";
 import Elysia, { t } from "elysia";
 import { createResponse } from "../createResponse";
-import type { AssetTag } from "../../Database/typeorm/entity/AssetTags";
 import { localStorageManager } from "../../StorageManagers/LocalStorageManager";
 import { ImageSet } from "../../ImageSet/ImageSet";
 
@@ -22,7 +20,6 @@ export const assetController = (app: Elysia) => {
 				"",
 				async ({ query, set }) => {
 					console.log("get assets")
-					let body: Asset[] = [];
 					if (query.tags) {
 						const tags = query.tags.split(",");
 						const assets = await getAssetsByTags({ tags });

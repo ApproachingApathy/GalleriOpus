@@ -1,18 +1,6 @@
-import {
-	In
-} from "typeorm";
-import { exists } from "../../utils/exists";
 import { db } from "../db";
 import { Prisma } from "@prisma/client"
-import { Asset } from "../typeorm/entity/Asset";
-import { AssetTag } from "../typeorm/entity/AssetTags";
-import { Tag } from "../typeorm/entity/Tag";
 import { AssetID } from "./types"
-import { formatTag } from "../../utils/formatTag";
-
-// const AssetRepo = db.getRepository(Asset);
-// const TagRepo = db.getRepository(Tag);
-// const AssetTagRepo = db.getRepository(AssetTag);
 
 interface ApplyTagToAssetParams {
     assetId: AssetID,

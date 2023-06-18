@@ -1,17 +1,5 @@
-import {
-	In
-} from "typeorm";
-import { exists } from "../../utils/exists";
 import { db } from "../db";
-import { Asset } from "../typeorm/entity/Asset";
-import { AssetTag } from "../typeorm/entity/AssetTags";
-import { Tag } from "../typeorm/entity/Tag";
-import { formatTag } from "../../utils/formatTag";
 import type { Prisma } from "@prisma/client";
-
-// const AssetRepo = db.getRepository(Asset);
-// const TagRepo = db.getRepository(Tag);
-// const AssetTagRepo = db.getRepository(AssetTag);
 
 interface CreateAssetParams {
 	url: string;

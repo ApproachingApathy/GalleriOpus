@@ -1,10 +1,4 @@
 import { db } from "../db";
-import { Asset } from "../typeorm/entity/Asset";
-import { AssetTag } from "../typeorm/entity/AssetTags";
-import { Tag } from "../typeorm/entity/Tag";
-
-// const AssetRepo = db.getRepository(Asset);
-// const AssetTagRepo = db.getRepository(AssetTag);
 
 interface GetAssetByTagsParams {
 	tags: string[];
