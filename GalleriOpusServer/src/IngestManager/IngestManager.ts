@@ -1,8 +1,8 @@
 import { exists } from "../utils/exists";
-import { join, resolve, dirname,  } from "path";
+import { join, resolve } from "path";
 import { nanoid } from "nanoid";
 
-import { IngestHandler, ImageResponseResult } from "../types/IngestHandler.js";
+import { IngestHandler } from "../types/IngestHandler.js";
 import directDLIngestHandler from "../IngestPlugins/OpusDirect";
 import redditIngestHandler from "../IngestPlugins/OpusReddit/index.js";
 import { getContentTypeInfo } from "./getContentTypeInfo";
@@ -25,7 +25,10 @@ interface IngestManager {
 	ingest: (url: string) => Promise<IngestResult>;
 }
 
-export const ingestManager: IngestManager = {
+export const ingestManager
+	: IngestManager 
+	=
+	 {
 	initialize: () => {
 		ingestManager.registerHandler(redditIngestHandler);
 		ingestManager.registerHandler(directDLIngestHandler);

@@ -4,6 +4,7 @@ import { StorageManager } from "../types/StorageManager";
 import { promisify } from "node:util";
 import { FileSize } from "./FileSize";
 import { Dirent, accessSync, fstat, mkdirSync } from "fs";
+import { appConfig } from "../Configuration/Configuration";
 
 // const unlink = promisify(fsUnlink)
 
@@ -132,4 +133,4 @@ export class LocalDataManager implements StorageManager {
     }
 }
 
-export const localStorageManager = new LocalDataManager(process.env.ASSET_DOWNLOAD_PATH)
+export const localStorageManager = new LocalDataManager(await appConfig.storage.local.library_directory)

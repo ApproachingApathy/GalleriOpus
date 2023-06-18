@@ -1,11 +1,13 @@
+console.log("top")
 import { Elysia } from "elysia";
 import { swagger } from "@elysiajs/swagger";
 import { cors } from "@elysiajs/cors"
 
 import { ingestManager } from "./IngestManager/IngestManager";
+// // import { appConfig } from "./Configuration/Configuration"
 import { assetController } from "./controllers/assets";
 import { tagController } from "./controllers/tags";
-ingestManager.initialize();
+ingestManager.initialize()
 
 const app = new Elysia()
 	.use(
@@ -17,8 +19,9 @@ const app = new Elysia()
 	.use(tagController)
 	.use(assetController)
 	.get("/", () => "Galleri Opus")
-	.listen(3000);
-
+	
+	
+app.listen(3000);
 console.log(`Elysia is running at ${app.server?.hostname}:${app.server?.port}`);
 
 export type App = typeof app;
